@@ -209,22 +209,40 @@ function switchView(v) {
 }
 
 // —— 智能体：本机探测 ——
+function defaultAgentArgs(exe, name) {
+  const key = `${String(exe || '')} ${String(name || '')}`.toLowerCase();
+  if (key.includes('opencode')) return 'run {task}';
+  if (key.includes('codex')) return 'exec {task}';
+  if (key.includes('claude')) return '-p {task}';
+  return '{task}';
+}
+
 async function detectAgents() {
   const j = await window.zjz.get('/api/agents/discover');
   const box = $('agDetect');
   const list = (j && j.agents) || [];
   if (list.length === 0) { box.innerHTML = '<span style="color:var(--warn)">本机没检测到已知智能体 CLI，可手动填</span>'; return; }
   box.innerHTML = '<span style="color:var(--dim2)">本机检测到：</span>' + list.map((a) =>
-    `<span class="chip" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">＋ ${esc(a.name)}</span>`).join('');
-  box.querySelectorAll('.chip').forEach((c) => {
+    `<span class="chip fill-one" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">＋ ${esc(a.name)}</span><button type="button" class="chip add-one" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">一键加入</button>`).join('');
+  box.querySelectorAll('.chip.fill-one').forEach((c) => {
     c.onclick = () => {
       $('agExe').value = c.dataset.exe;
       if (!$('agDispName').value) $('agDispName').value = c.dataset.name + '分身';
-      if (!$('agArgs').value) $('agArgs').value = 'run {task}';
+      $('agArgs').value = defaultAgentArgs(c.dataset.exe, c.dataset.name);
+    };
+  });
+  box.querySelectorAll('.chip.add-one').forEach((c) => {
+    c.onclick = () => {
+      const room_id = $('agRoom').value;
+      const msg = $('agInviteMsg');
+      if (!room_id) { msg.className = 'amsg bad'; msg.textContent = '先在“进入房间”里选一个项目房'; return; }
+      $('agExe').value = c.dataset.exe;
+      $('agDispName').value = c.dataset.name + '分身';
+      $('agArgs').value = defaultAgentArgs(c.dataset.exe, c.dataset.name);
+      $('agInvite').click();
     };
   });
 }
-
 // —— 智能体：进房下拉（带房主） ——
 async function loadAgentRooms() {
   const j = await window.zjz.get(`/api/rooms?slug=${encodeURIComponent(slug)}`);
