@@ -122,5 +122,64 @@ export function listPlans(home) {
   return { ok: true, plans };
 }
 
-export const planner = { makePlan, makeTask, plan_v1, savePlan, loadPlan, listPlans, ASSIGN_HINT };
+// ===== planner v2：大模型领会意图拆解（plan_smart），模板兜底 =====
+// 约定：模型 URL 由 ZJZ_PLANNER_MODEL_URL（或 opts.modelUrl）显式开启，未配置=纯模板（测试确定性）。
+// 严格校验：2~8 个任务、title 非空、assign 归一（非法→auto）；任何一步不过 → plan_v1 兜底，绝不抛错。
+const ALLOWED_ASSIGN = new Set(['code', 'writing', 'qa', 'local', 'auto']);
+const LLM_SYSTEM_PROMPT = '你是任务拆解器。把用户目标拆成 2~8 个可执行任务，只输出 JSON：{"tasks":[{"title":"一句话任务","assign":"code|writing|qa|local|auto","acceptance":"完成标准"}]}，不要输出任何其他文字。';
+
+function normalizeTasks(raw) {
+  if (!Array.isArray(raw) || raw.length < 1 || raw.length > 8) return null;
+  const tasks = [];
+  for (const item of raw) {
+    const title = item && typeof item.title === 'string' ? item.title.trim() : '';
+    if (!title) return null;
+    const assign = item && ALLOWED_ASSIGN.has(item.assign) ? item.assign : 'auto';
+    const acceptance = item && typeof item.acceptance === 'string' ? item.acceptance.trim() : '';
+    tasks.push(makeTask({ title, assign, acceptance }));
+  }
+  return tasks;
+}
+
+export async function plan_smart(goal, opts = {}) {
+  const g = String(goal || '').trim();
+  const modelUrl = opts.modelUrl !== undefined ? opts.modelUrl : (process.env.ZJZ_PLANNER_MODEL_URL || '');
+  const fallback = () => plan_v1(goal);
+  if (!g || !modelUrl) return fallback();
+  const fetchImpl = opts.fetch || fetch;
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), opts.timeoutMs || 8000) : null;
+  try {
+    const res = await fetchImpl(modelUrl, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      signal: controller ? controller.signal : undefined,
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: LLM_SYSTEM_PROMPT },
+          { role: 'user', content: g },
+        ],
+        temperature: 0.2,
+      }),
+    });
+    if (!res || !res.ok) return fallback();
+    const body = await res.json();
+    const content = body && body.choices && body.choices[0] && body.choices[0].message && body.choices[0].message.content;
+    if (typeof content !== 'string') return fallback();
+    const match = content.match(/\{[\s\S]*\}/); // 容忍 ```json 包裹或前后废话
+    if (!match) return fallback();
+    const tasks = normalizeTasks(JSON.parse(match[0]) && JSON.parse(match[0]).tasks);
+    if (!tasks) return fallback();
+    const plan = makePlan(goal);
+    plan.tasks = tasks;
+    plan.planned_by = 'llm';
+    return plan;
+  } catch {
+    return fallback();
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+export const planner = { makePlan, makeTask, plan_v1, plan_smart, savePlan, loadPlan, listPlans, ASSIGN_HINT };
 export default planner;

@@ -62,5 +62,11 @@ export function runGoal(home, goal) {
   return { ok: true, plan_id: plan.plan_id, plan, dispatched: d.dispatched };
 }
 
-export const scheduler = { dispatchPlan, runGoal, pickAgent };
+// ===== v2：大模型领会意图的异步拆解（runGoalSmart）——plan_smart 兜底，接口语义与 runGoal 一致 =====
+export async function runGoalSmart(home, goal, opts = {}) {
+  const plan = await planner.plan_smart(goal, opts);
+  return dispatchPlan(home, plan);
+}
+
+export const scheduler = { dispatchPlan, runGoal, runGoalSmart, pickAgent };
 export default scheduler;

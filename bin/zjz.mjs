@@ -344,7 +344,7 @@ async function main() {
       });
       return;
     }
-    const ran = chief.scheduler.runGoal(home, goal);
+    const ran = await chief.scheduler.runGoalSmart(home, goal);
     if (!ran.ok) { emit(ran); return; }
     const report = chief.summarizer.summarizeText(ran.plan);
     const review = chief.supervisor.reviewText(ran.plan);

@@ -595,7 +595,7 @@ function makeHandler(home, broker) {
           });
           return;
         }
-        const ran = chief.scheduler.runGoal(home, goal);
+        const ran = await chief.scheduler.runGoalSmart(home, goal);
         if (!ran.ok) { json(response, 500, ran); return; }
         const report = chief.summarizer.summarizeText(ran.plan);
         const review = chief.supervisor.reviewText(ran.plan);
