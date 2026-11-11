@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>中军帐 · 指挥台</title>
+<style>
+  /* 中军帐桌面 · Huddo 质感：深藏青 + 鎏金，按人分组消息 */
+  :root {
+    --bg:#0f1a2c; --bg2:#0a1220; --panel:#152338; --panel2:#1b2c46; --line:#2b3d59; --line2:#385072;
+    --fg:#e8eef7; --dim:#8fa2bd; --dim2:#64789a;
+    --gold:#d9b46a; --gold2:#c9a24f; --gold3:#8a6a2f;
+    --ok:#4fbf82; --warn:#e0a63c; --bad:#e2695f;
+  }
+  /* 主题：默认深色；[data-theme="light"] 浅色（客户可选） */
+  html[data-theme="light"] {
+    --bg:#eef2f7; --bg2:#e3e9f1; --panel:#ffffff; --panel2:#f5f8fc; --line:#d5dde6; --line2:#c3cfdd;
+    --fg:#252e3a; --dim:#6c7683; --dim2:#8a94a2;
+    --gold:#8a6420; --gold2:#b8934a; --gold3:#c9b98f;
+  }
+  html[data-theme="light"] body { background:radial-gradient(1100px 650px at 18% -8%, #ffffff 0%, var(--bg) 46%, var(--bg2) 100%); }
+  html[data-theme="light"] .titlebar { background:linear-gradient(180deg, rgba(184,147,74,.10), rgba(184,147,74,0) 72%), var(--panel); }
+  html[data-theme="light"] .titlebar .tt { background:linear-gradient(180deg,#a8823c,#8a6420); -webkit-background-clip:text; background-clip:text; }
+  html[data-theme="light"] .grp .avatar { background:linear-gradient(180deg,#e6c582,#c9a24f); color:#5c4310; }
+  html[data-theme="light"] .grp.mine .avatar { background:linear-gradient(180deg,#3f77c4,#1863c6); color:#fff; }
+  html[data-theme="light"] .grp.mine .bubble { background:linear-gradient(180deg, rgba(184,147,74,.14), rgba(184,147,74,.05)); border-color:var(--gold3); }
+  html[data-theme="light"] .composer .send { background:linear-gradient(180deg,#d8b871,#b8934a); color:#fff; }
+  html[data-theme="light"] .empty .et { background:linear-gradient(180deg,#a8823c,#8a6420); -webkit-background-clip:text; background-clip:text; }
+  html[data-theme="light"] .empty img { opacity:1; filter:none; }
+  html[data-theme="light"] ::-webkit-scrollbar-thumb { background:var(--line2); }
+  .titlebar .theme-btn { -webkit-app-region:no-drag; cursor:pointer; font-size:11px; color:var(--gold);
+    border:1px solid var(--gold3); border-radius:999px; padding:4px 12px; background:rgba(217,180,106,.08); }
+  .titlebar .theme-btn:hover { background:rgba(217,180,106,.18); }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { height:100%; }
+  body {
+    font:14px/1.6 "Segoe UI","Microsoft YaHei",sans-serif; color:var(--fg);
+    background:radial-gradient(1100px 650px at 18% -8%, #1a2a44 0%, var(--bg) 46%, var(--bg2) 100%);
+    display:flex; flex-direction:column; overflow:hidden; user-select:none;
+  }
+  /* 自绘标题栏 */
+  .titlebar { display:flex; align-items:center; gap:11px; padding:10px 16px;
+    background:linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,0) 72%), var(--panel);
+    border-bottom:1px solid var(--line2); -webkit-app-region:drag; flex-shrink:0; }
+  .titlebar img { width:28px; height:28px; border-radius:8px; }
+  .titlebar .tt { font-size:15px; font-weight:700; letter-spacing:.5px;
+    background:linear-gradient(180deg,#f0d79b,#d9b46a 60%,#b98f42); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .titlebar .ts { font-size:10px; color:var(--dim2); letter-spacing:3px; margin-top:-2px; }
+  .titlebar .spacer { flex:1; }
+  .titlebar .status { font-size:11px; color:var(--dim); -webkit-app-region:no-drag; display:flex; align-items:center; gap:6px; }
+  .titlebar .dot { width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 6px var(--ok); }
+  .titlebar .dot.off { background:var(--bad); box-shadow:0 0 6px var(--bad); }
+
+  main { flex:1; display:flex; min-height:0; }
+  /* 左侧：房间栏 */
+  aside { width:248px; flex-shrink:0; border-right:1px solid var(--line2);
+    background:linear-gradient(180deg,var(--panel),var(--bg2)); display:flex; flex-direction:column; }
+  aside .ahead { padding:11px 14px 8px; font-size:11px; letter-spacing:3px; color:var(--dim2);
+    border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; }
+  aside .ahead .add { margin-left:auto; cursor:pointer; color:var(--gold); font-size:16px; line-height:1;
+    width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:6px; border:1px solid var(--gold3); }
+  aside .ahead .add:hover { background:rgba(217,180,106,.14); }
+  aside .rlist { flex:1; overflow-y:auto; }
+  aside .room { padding:11px 15px; border-bottom:1px solid var(--line); cursor:pointer; transition:.15s; border-left:3px solid transparent; }
+  aside .room:hover { background:var(--panel2); }
+  aside .room.sel { background:linear-gradient(90deg, rgba(217,180,106,.16), rgba(217,180,106,0)); border-left-color:var(--gold); }
+  aside .room .rn { font-weight:600; font-size:13.5px; display:flex; align-items:center; gap:7px; }
+  aside .room .rm { color:var(--dim2); font-size:11px; margin-top:2px; display:flex; gap:7px; }
+  aside .room .un { margin-left:auto; color:#1a1206; background:var(--gold); font-size:10px; font-weight:700;
+    padding:1px 7px; border-radius:9px; }
+  aside .room.arch .rn { color:var(--dim2); text-decoration:line-through; }
+
+  /* 右侧：消息区 */
+  section { flex:1; display:flex; flex-direction:column; min-width:0; }
+  .rhead { padding:12px 20px; border-bottom:1px solid var(--line2); display:flex; align-items:center; gap:11px;
+    background:linear-gradient(180deg, rgba(217,180,106,.06), transparent); }
+  .rhead .rt { font-size:15px; font-weight:700; }
+  .rhead .rm { font-size:11px; color:var(--dim2); letter-spacing:1px; }
+  .rhead .rspacer { flex:1; }
+  .rhead .tag { font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:3px 11px; background:rgba(217,180,106,.08); }
+
+  /* 消息流：按人分组 */
+  .stream { flex:1; overflow-y:auto; padding:16px 22px 12px; }
+  .daysep { display:flex; align-items:center; gap:14px; color:var(--dim2); font-size:11px; margin:6px 0 14px; }
+  .daysep::before, .daysep::after { content:''; flex:1; height:1px; background:var(--line2); }
+  .grp { display:flex; gap:11px; margin-bottom:14px; }
+  .grp .avatar { flex:0 0 36px; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:600; color:#0c1220; background:linear-gradient(180deg,#e6c582,#c9a24f); box-shadow:0 2px 8px rgba(0,0,0,.32); }
+  .grp.mine .avatar { background:linear-gradient(180deg,#6d8fc4,#3f5f96); color:#eaf1fb; }
+  .grp .col { flex:1; min-width:0; }
+  .grp .who { display:flex; align-items:baseline; gap:9px; margin-bottom:3px; }
+  .grp .who .nm { font-size:13px; font-weight:600; }
+  .grp .who .hd { font-size:10px; color:var(--dim2); }
+  .grp .who .tm { margin-left:auto; font-size:10px; color:var(--dim2); }
+  .grp .bubble { background:var(--panel2); border:1px solid var(--line2); border-radius:4px 14px 14px 14px;
+    padding:9px 13px; font-size:13.5px; line-height:1.65; word-break:break-word; max-width:min(720px,100%);
+    box-shadow:0 2px 10px rgba(0,0,0,.15); white-space:pre-wrap; }
+  .grp.mine .bubble { background:linear-gradient(180deg, rgba(217,180,106,.15), rgba(217,180,106,.06)); border-color:var(--gold3); }
+  .grp .bubble + .bubble { margin-top:5px; border-radius:12px; }
+  .grp .reply { font-size:11px; color:var(--dim); background:var(--bg2); border-left:3px solid var(--gold);
+    padding:4px 9px; border-radius:6px; margin-bottom:5px; }
+  .grp .reply b { color:var(--gold); }
+
+  /* 底部：发消息 */
+  .composer { display:flex; gap:10px; padding:13px 20px; border-top:1px solid var(--line2); background:var(--panel); }
+  .composer input { flex:1; background:var(--bg2); color:var(--fg); border:1px solid var(--line2); border-radius:10px;
+    padding:11px 14px; font:inherit; outline:none; user-select:text; }
+  .composer input:focus { border-color:var(--gold3); }
+  .composer input::placeholder { color:var(--dim2); }
+  .composer .send { background:linear-gradient(180deg,#e6c582,#c9a24f); color:#25190a; font-weight:700;
+    border:1px solid var(--gold2); border-radius:10px; padding:11px 26px; cursor:pointer; box-shadow:0 2px 12px rgba(217,180,106,.28); }
+  .composer .send:hover { filter:brightness(1.06); }
+  .composer .send:active { transform:translateY(1px); }
+
+  /* 顶栏页签：房讯 / 智能体 */
+  .viewtabs { display:flex; gap:4px; padding:9px 20px 0; border-bottom:1px solid var(--line2); background:var(--panel); flex-shrink:0; }
+  .viewtabs .vt { padding:8px 18px; font-size:13px; cursor:pointer; color:var(--dim); border:1px solid transparent; border-bottom:none;
+    border-radius:9px 9px 0 0; transition:.15s; }
+  .viewtabs .vt:hover { color:var(--fg); background:var(--panel2); }
+  .viewtabs .vt.on { color:#25190a; background:linear-gradient(180deg,#e6c582,#c9a24f); font-weight:700;
+    box-shadow:0 -2px 10px rgba(217,180,106,.22); }
+
+  /* 智能体面板 */
+  .agents { flex:1; overflow-y:auto; padding:18px 22px; display:none; }
+  .agents.show { display:block; }
+  .acard { border:1px solid var(--line2); border-radius:12px; padding:15px 18px; margin-bottom:14px; background:var(--panel2); box-shadow:0 3px 14px rgba(0,0,0,.14); }
+  .acard .at { font-size:14px; font-weight:700; letter-spacing:1px; margin-bottom:4px; }
+  .acard .as { font-size:11.5px; color:var(--dim2); margin-bottom:11px; line-height:1.7; }
+  .arow { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:9px; }
+  .arow label { font-size:11px; color:var(--dim2); min-width:70px; }
+  .arow input, .arow select { background:var(--bg2); color:var(--fg); border:1px solid var(--line2); border-radius:8px;
+    padding:8px 11px; font:inherit; font-size:12.5px; outline:none; }
+  .arow input:focus, .arow select:focus { border-color:var(--gold3); }
+  .arow input::placeholder { color:var(--dim2); }
+  .abtn { background:linear-gradient(180deg,#e6c582,#c9a24f); color:#25190a; font-weight:700; border:1px solid var(--gold2);
+    border-radius:9px; padding:9px 20px; cursor:pointer; box-shadow:0 2px 10px rgba(217,180,106,.26); }
+  .abtn:hover { filter:brightness(1.05); }
+  .abtn.ghost { background:transparent; color:var(--gold); box-shadow:none; border-color:var(--gold3); }
+  .abtn.ghost:hover { background:rgba(217,180,106,.12); }
+  .amsg { font-size:12px; margin-top:9px; min-height:16px; }
+  .amsg.ok { color:var(--ok); } .amsg.bad { color:var(--bad); }
+  .detect { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0; }
+  .detect .chip { font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:5px 13px;
+    cursor:pointer; background:rgba(217,180,106,.10); transition:.15s; }
+  .detect .chip:hover { background:rgba(217,180,106,.2); }
+  .agent-item { display:flex; align-items:center; gap:11px; padding:11px 0; border-bottom:1px solid var(--line); }
+  .agent-item:last-child { border-bottom:none; }
+  .agent-item .an { font-size:13px; font-weight:600; }
+  .agent-item .aw { font-size:10px; padding:2px 9px; border-radius:9px; }
+  .agent-item .aw.on { color:var(--ok); border:1px solid var(--ok); background:rgba(79,191,130,.10); }
+  .agent-item .aw.off { color:var(--warn); border:1px solid var(--warn); background:rgba(224,166,60,.10); }
+  .agent-item .arm { margin-left:auto; font-size:11px; color:var(--dim2); font-family:Consolas,monospace; }
+  .agent-item .ax { cursor:pointer; color:var(--bad); border:1px solid var(--bad); border-radius:8px; padding:4px 12px; font-size:11px; }
+  .agent-item .ax:hover { background:rgba(226,105,95,.12); }
+
+  /* 空状态 */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:40px; text-align:center; }
+  .empty img { width:110px; height:110px; opacity:1; filter:none; }
+  .empty .et { font-size:18px; font-weight:700; letter-spacing:4px;
+    background:linear-gradient(180deg,#f0d79b,#c9a24f); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .empty .es { font-size:12.5px; color:var(--dim2); line-height:1.9; letter-spacing:1px; }
+  .loading { text-align:center; color:var(--dim2); padding:40px; letter-spacing:2px; }
+  ::-webkit-scrollbar { width:9px; height:9px; }
+  ::-webkit-scrollbar-thumb { background:var(--line2); border-radius:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+</style>
+</head>
+<body>
+  <div class="titlebar">
+    <img src="../public/icon-256.png" alt="">
+    <div>
+      <div class="tt">中军帐</div>
+      <div class="ts">指 挥 台</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="theme-btn" id="themeBtn" title="切换深色/浅色">☀ 浅色</div>
+    <div class="status"><span class="dot" id="connDot"></span><span id="connTxt">已连接</span></div>
+  </div>
+  <main>
+    <aside>
+      <div class="ahead">项目 / 房间<span class="add" id="newRoom" title="开新项目房">＋</span></div>
+      <div class="rlist" id="roomList"><div class="loading">载入中…</div></div>
+    </aside>
+    <section>
+      <div class="viewtabs">
+        <div class="vt on" id="tabChat">房 讯</div>
+        <div class="vt" id="tabAgents">智 能 体</div>
+      </div>
+      <div class="rhead" id="roomHead" style="display:none">
+        <div>
+          <div class="rt" id="roomTitle"></div>
+          <div class="rm" id="roomMeta"></div>
+        </div>
+        <div class="rspacer"></div>
+        <div class="tag" id="roomTag"></div>
+      </div>
+      <div class="stream" id="stream">
+        <div class="empty">
+          <img src="../public/icon-256.png" alt="">
+          <div class="et">中 军 帐 · 指 挥 台</div>
+          <div class="es">左侧选择一个项目房间<br>即可查看房讯、指挥智能体</div>
+        </div>
+      </div>
+      <div class="agents" id="agentsPanel">
+        <!-- 开新项目房 -->
+        <div class="acard">
+          <div class="at">开一个新项目 / 房间</div>
+          <div class="as">先建项目房拿邀请码，再把智能体请进来。</div>
+          <div class="arow">
+            <label>项目名</label>
+            <input id="agName" placeholder="如：海钺申报、减脂私域" style="min-width:220px">
+            <button class="abtn" id="agCreate">创建项目房</button>
+          </div>
+          <div class="amsg" id="agCreateMsg"></div>
+          <div id="agCreated"></div>
+        </div>
+        <!-- 请智能体 -->
+        <div class="acard">
+          <div class="at">请一个智能体进帐</div>
+          <div class="as">本机检测到的智能体可一键选用，或自定义。</div>
+          <div class="detect" id="agDetect"><span style="color:var(--dim2)">正在检测本机智能体…</span></div>
+          <div class="arow">
+            <label>显示名</label>
+            <input id="agDispName" placeholder="给它起个名字（如：MiMo分身）" style="min-width:180px">
+            <label>进哪个房</label>
+            <select id="agRoom"></select>
+          </div>
+          <div class="arow">
+            <label>可执行</label>
+            <input id="agExe" placeholder="如 codex / claude / opencode-cli" style="min-width:200px">
+            <label>参数</label>
+            <input id="agArgs" placeholder="必须含 {task}" style="min-width:180px">
+          </div>
+          <div class="arow">
+            <label>唤醒</label>
+            <select id="agWake"><option value="all">全部消息</option><option value="mention">只在被@</option></select>
+            <label>超时(ms)</label>
+            <input id="agTimeout" type="number" value="600000" style="width:110px">
+            <button class="abtn" id="agInvite">加入中军帐</button>
+          </div>
+          <div class="amsg" id="agInviteMsg"></div>
+        </div>
+        <!-- 帐内智能体 -->
+        <div class="acard">
+          <div class="at">帐内智能体</div>
+          <div class="as">按房间逐个移出（移出只退该房，身份保留可再请回）。</div>
+          <div id="agList"><div style="color:var(--dim2)">载入中…</div></div>
+        </div>
+      </div>
+      <div class="composer">
+        <input id="msgInput" placeholder="发消息…（回车发送）" />
+        <button class="send" id="sendBtn">发送</button>
+      </div>
+    </section>
+  </main>
+  <script src="renderer.js"></script>
+</body>
+</html>

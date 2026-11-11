@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 中军帐图标主源 · 帅案令旗钺（线条白描，居中对称）
+     意象：军帐（宝顶尖顶＋荷叶边＋布幔垂落＋拱门大开）＋ 帐内居中一张帅案、案上一杆小令旗（木杆红幡金字「钺」）。
+     线条白描，深藏青底、鎏金，低饱和；512 网格，透明背景，圆角方形徽章，整体居中、四边留白匀。
+     16px 判据：金帐剪影＋门洞＋案上一点红幡，轮廓立得住；256px 见布幔、荷叶边、旗穗、罗盘刻度。 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="中军帐">
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2A44"/><stop offset="0.55" stop-color="#13203A"/><stop offset="1" stop-color="#0C1322"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8CB86"/><stop offset="0.5" stop-color="#CBA75E"/><stop offset="1" stop-color="#A5813C"/>
+    </linearGradient>
+    <linearGradient id="flag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C1272D"/><stop offset="0.55" stop-color="#A21C22"/><stop offset="1" stop-color="#7E1418"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6B4A2E"/><stop offset="0.5" stop-color="#8A6440"/><stop offset="1" stop-color="#5E3F27"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.12"/><stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.02"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 徽章底板 -->
+  <rect x="40" y="40" width="432" height="432" rx="98" fill="url(#plate)"/>
+  <rect x="40" y="40" width="432" height="432" rx="98" fill="url(#gloss)"/>
+  <rect x="52" y="52" width="408" height="408" rx="86" fill="none" stroke="#CBA75E" stroke-opacity="0.26" stroke-width="4"/>
+  <rect x="40" y="40" width="432" height="432" rx="98" fill="none" stroke="url(#gold)" stroke-width="10"/>
+
+  <!-- 罗盘刻度环衬底（居中） -->
+  <circle cx="256" cy="270" r="166" fill="none" stroke="#CBA75E" stroke-opacity="0.15" stroke-width="3"/>
+  <g stroke="#CBA75E" stroke-opacity="0.28" stroke-width="4" stroke-linecap="round">
+    <line x1="256" y1="96" x2="256" y2="114"/><line x1="256" y1="426" x2="256" y2="444"/>
+    <line x1="82" y1="270" x2="100" y2="270"/><line x1="412" y1="270" x2="430" y2="270"/>
+  </g>
+
+  <!-- 军帐（居中对称）：宝顶＋帐顶垂落＋檐口荷叶边＋布幔＋拱门 -->
+  <circle cx="256" cy="118" r="11" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <line x1="256" y1="129" x2="256" y2="146" stroke="url(#gold)" stroke-width="6"/>
+  <!-- 帐顶两坡 -->
+  <path d="M256 140 C 216 176 178 216 152 252" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M256 140 C 296 176 334 216 360 252" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M256 140 C 256 182 256 218 256 252" fill="none" stroke="#CBA75E" stroke-opacity="0.5" stroke-width="3"/>
+  <!-- 檐口荷叶边 -->
+  <path d="M146 256 Q 256 232 366 256" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M146 256 q 18 15 36 0 q 18 15 36 0 q 18 15 36 0 q 18 15 36 0 q 18 15 36 0 q 18 15 36 0 q 18 15 36 0"
+        fill="none" stroke="#CBA75E" stroke-opacity="0.7" stroke-width="4"/>
+  <!-- 布幔两侧垂落 -->
+  <path d="M152 256 C 143 306 139 366 146 414" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M360 256 C 369 306 373 366 366 414" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <!-- 帐底地线 -->
+  <line x1="142" y1="416" x2="370" y2="416" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <!-- 拱门敞口（居中，开大） -->
+  <path d="M202 416 L202 338 A 54 54 0 0 1 310 338 L310 416" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M218 416 L218 342 A 38 38 0 0 1 294 342 L294 416" fill="none" stroke="#CBA75E" stroke-opacity="0.4" stroke-width="3"/>
+
+  <!-- 中军帐固定绳（从左檐角斜拉到地面桩），红幡金字「钺」系在绳上 -->
+  <line x1="152" y1="256" x2="96" y2="420" stroke="#CBA75E" stroke-opacity="0.5" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="88" y1="414" x2="104" y2="430" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+  <!-- 系在固定绳上的红幡（钺） -->
+  <path d="M132 292 L132 396 L184 344 Z" fill="url(#flag)" stroke="#8C6B2F" stroke-width="3" stroke-linejoin="round"/>
+  <text x="151" y="342" text-anchor="middle" dominant-baseline="central"
+        font-family="'演示佛系体','Slidefu',SimSun,serif" font-size="42" fill="#F0D375">钺</text>
+</svg>

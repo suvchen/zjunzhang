@@ -1,0 +1,10 @@
+data/
+.backups/
+.work/
+# 装机产物（122MB 级，绝不进仓；由 scripts/pack.ps1 现生成）
+desktop/dist/
+zjz-v0.1.zip
+zjz-v0.1/
+trials/runs/*/home/
+trials/huddo-real-20261109/home/
+trials/huddo-real-20261109/huddo_room*.txt

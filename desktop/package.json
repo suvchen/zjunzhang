@@ -1,0 +1,89 @@
+{
+  "name": "zjunzhang-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "description": "中军帐 · 多智能体协作指挥台",
+  "author": "中军帐",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win",
+    "dist:dir": "electron-builder --win --dir"
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.zjunzhang.desktop",
+    "productName": "中军帐",
+    "copyright": "© 中军帐",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.cjs",
+      "index.html",
+      "renderer.js"
+    ],
+    "extraResources": [
+      {
+        "from": "../bin",
+        "to": "bin",
+        "filter": ["**/*", "!**/.backups/**", "!**/node_modules/**", "!**/runs/**"]
+      },
+      {
+        "from": "../src",
+        "to": "src",
+        "filter": [
+          "**/*",
+          "!**/.backups/**",
+          "!**/node_modules/**",
+          "!**/runs/**",
+          "!**/planner.js",
+          "!**/scheduler.js",
+          "!**/summarizer.js",
+          "!**/prodder.js",
+          "!**/supervisor.js"
+        ]
+      },
+      {
+        "from": "../public",
+        "to": "public",
+        "filter": ["**/*", "!**/.backups/**", "!**/node_modules/**", "!**/runs/**"]
+      },
+      {
+        "from": "../package.json",
+        "to": "package.json"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "../public/favicon.ico",
+      "artifactName": "中军帐-Setup-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "中军帐",
+      "installerIcon": "../public/favicon.ico",
+      "uninstallerIcon": "../public/favicon.ico",
+      "installerHeaderIcon": "../public/favicon.ico",
+      "deleteAppDataOnUninstall": false,
+      "include": "installer/zjz.nsh",
+      "license": null
+    }
+  }
+}

@@ -1,0 +1,646 @@
+<!doctype html>
+<!-- 中军帐 M4 · 单窗口多房间 UI（总管前端交付 2026-11-09）
+     契约＝Codex 冻结面：/api/health /api/rooms /api/rooms/:id/messages /api/rooms/:id/stream
+     /api/search /api/skills /api/duty/board。单文件、原生 JS、零依赖。 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>中军帐</title>
+<!-- 应用图标（房② #57283：MiMo 出图 qwen_image 本地模型，Codex 接线）
+     favicon.ico=多尺寸主源；icon-256.png=256px 透明源；icon.svg=旧版矢量草稿（与定稿不同款，暂不作 fallback，等 MiMo 描同款后再启用） -->
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48 64x64 256x256">
+<link rel="icon" type="image/png" sizes="256x256" href="icon-256.png">
+<link rel="apple-touch-icon" href="icon-256.png">
+<style>
+  /* 主题：默认深色；[data-theme="light"] 白色底（主人要求可切换） */
+  html[data-theme="light"] {
+    --bg:#eef2f7; --bg2:#e2e9f1; --panel:#ffffff; --panel2:#f4f7fb; --line:#d8e0ea; --line2:#c3d0dd;
+    --fg:#242c36; --dim:#66717f; --dim2:#8b97a4;
+    --gold:#9a6b12; --gold2:#7d560d; --gold3:#63430a;
+    --acc:#1863c6; --ok:#237f49; --warn:#a97412; --bad:#c23a34;
+    --shadow:0 12px 30px rgba(0,0,0,.12);
+  }
+  html[data-theme="light"] body { background:radial-gradient(1200px 700px at 20% -10%, #ffffff 0%, var(--bg) 45%, var(--bg2) 100%); }
+  html[data-theme="light"] header button:hover { background:#e7edf5; }
+  html[data-theme="light"] .grp.mine .avatar { background:linear-gradient(180deg,#3f77c4,#1863c6); color:#fff; }
+  html[data-theme="light"] .grp .avatar { color:#5c4310; }
+  :root {
+    --bg:#101b2d; --bg2:#0a1424; --panel:#152338; --panel2:#1b2c46; --line:#2b3d59; --line2:#385072;
+    --fg:#e8eef7; --dim:#8fa2bd; --dim2:#64789a;
+    --gold:#d9b46a; --gold2:#c1974a; --gold3:#8a6a2f;
+    --acc:#d9b46a; --ok:#4fbf82; --warn:#e0a63c; --bad:#e2695f;
+    --shadow:0 12px 30px rgba(0,0,0,.35);
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; height:100vh; display:flex; flex-direction:column;
+    background:radial-gradient(1200px 700px at 20% -10%, #1a2a44 0%, var(--bg) 45%, var(--bg2) 100%);
+    color:var(--fg); font:14px/1.6 "Segoe UI","Microsoft YaHei",sans-serif; }
+  /* 页头：中军帐 · 指挥台 品牌区 */
+  header { display:flex; gap:10px; align-items:center; padding:10px 16px;
+    background:linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,0) 70%), var(--panel);
+    border-bottom:1px solid var(--line2); box-shadow:0 6px 20px rgba(0,0,0,.28); flex-wrap:wrap; }
+  header .logo { display:flex; align-items:center; gap:10px; margin-right:6px; }
+  header .logo img { width:30px; height:30px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.4); }
+  header .logo .t { font-weight:700; font-size:16px; letter-spacing:.5px;
+    background:linear-gradient(180deg,#f0d79b,#d9b46a 60%,#b98f42); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  header .logo .s { font-size:11px; color:var(--dim2); letter-spacing:2px; margin-top:-2px; }
+  header input, header select, header button {
+    background:var(--panel2); color:var(--fg); border:1px solid var(--line2); border-radius:8px; padding:6px 11px; font:inherit; }
+  header input::placeholder { color:var(--dim2); }
+  header button { cursor:pointer; transition:.15s; }
+  header button:hover { border-color:var(--gold3); background:#223452; }
+  header button.on { background:linear-gradient(180deg,#e6c582,#c9a24f); border-color:var(--gold2); color:#25190a; font-weight:700; box-shadow:0 2px 10px rgba(217,180,106,.3); }
+  #dutyline { margin-left:auto; color:var(--dim); font-size:12px; }
+  #dutyline.lost { color:var(--bad); font-weight:600; }
+  main { flex:1; display:flex; min-height:0; }
+  aside { width:248px; border-right:1px solid var(--line2); background:linear-gradient(180deg,var(--panel),var(--bg2));
+    overflow-y:auto; flex-shrink:0; }
+  aside .room { padding:10px 14px; border-bottom:1px solid var(--line); cursor:pointer; transition:.15s; border-left:3px solid transparent; }
+  aside .room:hover { background:var(--panel2); }
+  aside .room.sel { background:linear-gradient(90deg, rgba(217,180,106,.16), rgba(217,180,106,0)); border-left-color:var(--gold); }
+  aside .room .name { font-weight:600; }
+  aside .room .meta { color:var(--dim); font-size:12px; }
+  aside .room .unread { color:var(--gold); font-weight:700; }
+  aside .room.arch .name { color:var(--dim2); text-decoration:line-through; }
+  section { flex:1; display:flex; flex-direction:column; min-width:0; }
+  /* 消息流：按人分组 + 日期分隔，层次清晰（主人要求：不要糊成一坨） */
+  #stream { flex:1; overflow-y:auto; padding:12px 18px 16px; display:flex; flex-direction:column; gap:7px; }
+  .daysep { display:flex; align-items:center; gap:12px; color:var(--dim); font-size:11px; margin:0; }
+  .daysep::before, .daysep::after { content:''; flex:1; height:1px; background:var(--line); }
+  .grp { display:flex; gap:10px; align-items:flex-start; }
+  .grp .avatar { flex:0 0 32px; width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#0c1220; background:linear-gradient(180deg,#e6c582,#c9a24f); box-shadow:0 2px 8px rgba(0,0,0,.3); }
+  .grp.mine .avatar { background:linear-gradient(180deg,#6d8fc4,#3f5f96); color:#eaf1fb; }
+  .grp .col { flex:1; min-width:0; }
+  .grp .who { font-size:12px; color:var(--dim); display:flex; align-items:baseline; gap:8px; margin-bottom:3px; }
+  .grp .who .who-name { font-size:13px; font-weight:700; color:var(--fg); }
+  .grp .when { font-size:11px; font-weight:400; color:var(--dim); }
+  .grp .seq { font-size:10px; color:var(--acc); font-weight:400; }
+  .grp .ext { font-size:10px; color:var(--dim); }
+  .grp .line { margin-top:2px; padding:8px 12px; background:var(--panel2); border:1px solid var(--line2); border-radius:14px; word-break:break-word; line-height:1.6; max-width:min(760px, 100%); box-shadow:0 2px 10px rgba(0,0,0,.16); }
+  .grp.mine .line { background:linear-gradient(180deg, rgba(217,180,106,.16), rgba(217,180,106,.07)); border-color:var(--gold3); }
+  .grp .line + .line { border-radius:14px; }
+  .text .h3 { font-size:13.5px; font-weight:700; margin:3px 0 1px; color:var(--gold); }
+  .text .h3:first-child { margin-top:0; }
+  .text .li { margin:0 0 0 2px; padding-left:13px; position:relative; }
+  .text .li::before { content:'▸'; position:absolute; left:0; color:var(--gold); }
+  .text code.ic { background:var(--bg2); border:1px solid var(--line2); border-radius:4px; padding:1px 5px; font-family:Consolas,monospace; font-size:12px; color:var(--gold); }
+  .text .row { font-family:Consolas,monospace; font-size:12px; color:var(--dim); white-space:pre; overflow-x:auto; margin:1px 0; }
+  .text .p { margin:4px 0 0; }
+  .text .p:first-child { margin-top:0; }
+  .text b { font-weight:700; color:var(--gold); }
+  .grp .reply { display:block; font-size:11px; color:var(--dim); background:var(--bg2); border:1px solid var(--line2); border-left:3px solid var(--gold); padding:4px 10px; border-radius:11px; margin-bottom:2px; }
+  .grp .reply b { color:var(--gold); font-weight:600; }
+  .grp .tag { font-size:10px; padding:1px 6px; border-radius:9px; background:rgba(217,180,106,.14); color:var(--gold); border:1px solid var(--gold3); }
+  .grp .handle { color:var(--dim); font-weight:400; font-size:11px; }
+  .grp .when { margin-left:auto; }
+  .grp .foot { margin-top:2px; display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+  .grp .react { font-size:12px; padding:2px 8px; border-radius:11px; background:var(--bg2); border:1px solid var(--line2); cursor:default; }
+  .grp .attach { font-size:11px; color:var(--gold); padding:3px 8px; border:1px dashed var(--gold3); border-radius:6px; }
+  .err { color:var(--bad); padding:10px; }
+  /* 空状态：中军帐 logo 水印 + 引导语 */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:40px; text-align:center; }
+  .empty img { width:120px; height:120px; opacity:1; filter:none; }
+  .empty .et { font-size:19px; font-weight:700; letter-spacing:4px;
+    background:linear-gradient(180deg,#f0d79b,#c9a24f); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .empty .es { font-size:13px; color:var(--dim2); line-height:1.9; letter-spacing:1px; }
+  .empty .es b { color:var(--gold); font-weight:600; }
+  .empty .badge { display:inline-flex; gap:7px; align-items:center; padding:7px 15px; border:1px solid var(--gold3);
+    border-radius:999px; color:var(--gold); font-size:12px; letter-spacing:1px; background:rgba(217,180,106,.10); }
+  /* 页面级：页头 + 结构卡片 */
+  .page-head { display:flex; align-items:baseline; gap:12px; margin:2px 0 16px; padding-bottom:12px; border-bottom:1px solid var(--line2); }
+  .page-head .pt { font-size:17px; font-weight:700; letter-spacing:2px;
+    background:linear-gradient(180deg,#f0d79b,#c9a24f); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .page-head .pc { font-size:12px; color:var(--dim2); letter-spacing:1px; }
+  .page-head .pc b { color:var(--gold); font-weight:700; }
+  .res { border:1px solid var(--line2); border-radius:11px; padding:12px 15px; margin-bottom:10px; background:var(--panel2); box-shadow:0 3px 14px rgba(0,0,0,.14); transition:.15s; }
+  .res:hover { border-color:var(--gold3); transform:translateY(-1px); }
+  .res .rh { display:flex; gap:10px; align-items:center; margin-bottom:5px; }
+  .res .rid { font-family:Consolas,monospace; font-size:11px; color:var(--gold); background:rgba(217,180,106,.12); padding:1px 8px; border-radius:5px; }
+  .res .rauth { font-size:12px; font-weight:600; color:var(--fg); }
+  .res .rwhen { margin-left:auto; font-size:11px; color:var(--dim2); }
+  .res .rbody { font-size:13px; color:var(--dim); line-height:1.65; }
+  .res mark { background:rgba(217,180,106,.22); color:var(--gold); border-radius:3px; padding:0 3px; }
+  .skill-card { border:1px solid var(--line2); border-left:3px solid var(--gold); border-radius:11px; padding:13px 16px; margin-bottom:10px; background:var(--panel2); box-shadow:0 3px 14px rgba(0,0,0,.14); }
+  .skill-card .sid { font-family:Consolas,monospace; font-size:13px; font-weight:700; color:var(--gold); }
+  .skill-card .sby { font-size:11px; color:var(--dim2); margin-left:8px; }
+  .skill-card .sbody { margin-top:6px; font-size:12.5px; color:var(--dim); line-height:1.7; white-space:pre-wrap; }
+  .duty-grid { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .duty-stat { flex:1; min-width:110px; background:var(--panel2); border:1px solid var(--line2); border-radius:11px; padding:12px 16px; text-align:center; box-shadow:0 3px 14px rgba(0,0,0,.14); }
+  .duty-stat .n { font-size:24px; font-weight:700; color:var(--gold); line-height:1.2; }
+  .duty-stat .l { font-size:11px; color:var(--dim2); letter-spacing:2px; margin-top:3px; }
+  .duty-stat.ok .n { color:var(--ok); } .duty-stat.bad .n { color:var(--bad); } .duty-stat.warn .n { color:var(--warn); }
+  table.duty { width:100%; border-collapse:separate; border-spacing:0; background:var(--panel2); border:1px solid var(--line2); border-radius:11px; overflow:hidden; box-shadow:0 3px 14px rgba(0,0,0,.14); }
+  table.duty th { background:rgba(217,180,106,.12); color:var(--gold); font-size:11px; letter-spacing:2px; padding:9px 12px; text-align:left; }
+  table.duty td { padding:9px 12px; border-top:1px solid var(--line2); font-size:12.5px; }
+  footer { display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--line2); background:var(--panel); }
+  footer input { flex:1; background:var(--bg2); color:var(--fg); border:1px solid var(--line2); border-radius:8px; padding:9px 12px; font:inherit; }
+  footer input::placeholder { color:var(--dim2); }
+  #send { background:linear-gradient(180deg,#e6c582,#c9a24f); color:#25190a; font-weight:700; border:1px solid var(--gold2); border-radius:8px; padding:9px 18px; cursor:pointer; box-shadow:0 2px 10px rgba(217,180,106,.28); }
+  #send:hover { filter:brightness(1.06); }
+  .panel { flex:1; overflow-y:auto; padding:14px 18px; display:none; }
+  .panel.show { display:block; }
+  .card { border:1px solid var(--line2); border-radius:14px; padding:10px 13px; margin-bottom:9px; background:var(--panel2); white-space:pre-wrap; box-shadow:0 3px 14px rgba(0,0,0,.16); }
+  table { border-collapse:collapse; width:100%; }
+  table { border:1px solid var(--line2); border-radius:12px; overflow:hidden; background:var(--panel2); }
+  td,th { border-bottom:1px solid var(--line2); padding:7px 10px; text-align:left; font-size:13px; }
+  tr:last-child td { border-bottom:none; }
+  th { color:var(--gold); }
+  .tag-ok{color:var(--ok)} .tag-bad{color:var(--bad)} .tag-warn{color:var(--warn)}
+  #conn { font-size:12px; }
+  #conn.live{color:var(--ok)} #conn.poll{color:var(--warn)} #conn.dead{color:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">
+    <img src="icon-256.png" alt="中军帐">
+    <span>
+      <div class="t">中军帐</div>
+      <div class="s">指 挥 台</div>
+    </span>
+  </span>
+  <select id="slug" title="身份"></select>
+  <button data-view="rooms" class="on">房间</button>
+  <button data-view="search">检索</button>
+  <button data-view="skills">技能卡</button>
+  <button data-view="duty">工单/在岗</button>
+  <button data-view="agents">请智能体</button>
+  <input id="q" placeholder="关键词（检索页）" size="18">
+  <button id="theme" title="切换深色/白色">&#127769; 深色</button>
+  <span id="conn"></span>
+  <span id="dutyline"></span>
+</header>
+<main>
+  <aside id="rooms"></aside>
+  <section>
+    <div id="stream"></div>
+    <div id="p-search" class="panel"></div>
+    <div id="p-skills" class="panel"></div>
+    <div id="p-duty" class="panel"></div>
+    <div id="p-agents" class="panel"></div>
+    <footer id="composer">
+      <input id="text" placeholder="发消息（回车发送）">
+      <button id="send">发送</button>
+    </footer>
+  </section>
+</main>
+<script>
+'use strict';
+// —— 状态 ——
+function applyTheme(name) {
+  if (name === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem('zjz.theme', name);
+  const b = document.getElementById('theme');
+  if (b) b.innerHTML = name === 'light' ? '&#9728; 白色' : '&#127769; 深色';
+}
+applyTheme(localStorage.getItem('zjz.theme') || 'dark');
+let slug = localStorage.getItem('zjz.slug') || '';
+let currentRoom = null;
+let lastSeq = 0;
+let es = null;           // SSE（第 0 层在线即推）
+let pollTimer = null;    // 回落轮询
+let view = 'rooms';
+const $ = (id) => document.getElementById(id);
+const api = async (path, opt) => {
+  const r = await fetch(path, opt);
+  const j = await r.json().catch(() => ({ ok: false, code: 'BAD_JSON' }));
+  return j;
+};
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// E34：界面上别甩长 slug/内部 id——人要看的是名字。zjz-代班分身-房二-49e324ef -> 代班分身
+function shortName(s) {
+  let x = String(s || '');
+  x = x.replace(/^zjz-/, '');
+  x = x.replace(/^huddo-/, '');
+  x = x.replace(/-[0-9a-f]{6,}$/i, '');
+  return x || String(s || '');
+}
+function cleanText(value) {
+  let x = String(value ?? '');
+  x = x.replace(/\[huddo:msg_[^\]]*\]/gi, '');
+  x = x.replace(/【时间标[^】]*】/g, '');
+  x = x.replace(/\[时间标[^\]]*\]/gi, '');
+  x = x.replace(/^\s*@[^\s]+\s*/, '');
+  return x.trim();
+}
+// M55：房讯必须看得出发在何时——本地可读＋（悬停/属性保留 ISO 原值），缺 ts 显式标未知。
+const fmtTs = (ts) => {
+  if (!ts) return '时间未知';
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return String(ts);
+  const p = (n) => String(n).padStart(2, '0');
+  const off = -d.getTimezoneOffset();
+  const sign = off >= 0 ? '+' : '-';
+  const abs = Math.abs(off);
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}（UTC${sign}${p(Math.floor(abs / 60))}:${p(abs % 60)}）`;
+};
+
+// —— 身份 ——
+async function loadSlugs() {
+  let list = [];
+  const j = await api('/api/members'); // 契约外扩展：Codex 未提供时回落 /api/rooms 的 current_slug
+  if (j && j.slugs) list = j.slugs;
+  else {
+    const r = await api('/api/rooms?slug=');
+    if (r && r.current_slug) list = [r.current_slug];
+  }
+  // E24：进房后只列**本房成员**。身份下拉若列全库成员，挑到非成员一发就 NOT_MEMBER（主人实弹：信息发不出）。
+  if (currentRoom && slug) {
+    const rm = await api(`/api/rooms/${currentRoom}/members?slug=${encodeURIComponent(slug)}`);
+    if (rm && rm.ok && Array.isArray(rm.members) && rm.members.length > 0) {
+      const inRoom = rm.members.map((m) => m.slug);
+      list = inRoom;
+      if (!inRoom.includes(slug)) { slug = inRoom[0]; localStorage.setItem('zjz.slug', slug); }
+    }
+  }
+  if (!slug && list.length > 0) slug = list[0]; // 首次访问默认第一个身份（单窗口零配置起步）
+  const sel = $('slug');
+  sel.innerHTML = list.map((s) => `<option ${s === slug ? 'selected' : ''}>${esc(s)}</option>`).join('');
+  sel.onchange = () => { slug = sel.value; localStorage.setItem('zjz.slug', slug); refresh(true); };
+}
+
+// —— 房间列表 ——
+async function loadRooms(reset) {
+  if (!slug) return;
+  let j = await api(`/api/rooms?slug=${encodeURIComponent(slug)}`);
+  if (!j.ok) { renderErr(j); return; }
+  // E24-C：当前身份一个房都没有＝currentRoom 永远为空＝发送按钮静默无效。自动换到有房的身份，别让人对着空界面发呆。
+  if (!j.rooms || j.rooms.length === 0) {
+    const alt = await api('/api/rooms?slug=');
+    const altSlug = alt && alt.current_slug;
+    if (altSlug && altSlug !== slug) {
+      slug = altSlug; localStorage.setItem('zjz.slug', slug);
+      const j2 = await api(`/api/rooms?slug=${encodeURIComponent(slug)}`);
+      if (j2 && j2.ok && Array.isArray(j2.rooms)) j = j2;
+      loadSlugs();
+    }
+  }
+  const box = $('rooms');
+  box.innerHTML = '';
+  if (!currentRoom) {
+    const first = j.rooms.find((r) => !r.archived && Number(r.unread) > 0) || j.rooms.find((r) => !r.archived);
+    if (first) currentRoom = first.room_id;
+    if (!currentRoom) { box.innerHTML = '<div class="empty"><img src="icon-256.png" alt=""><div class="et">中 军 帐 · 指 挥 台</div><div class="es">当前身份没有活跃房间。<br>可切换右上角「身份」，或由房主邀请入房。</div><div class="badge">✦ 值日官待命</div></div>'; return; }
+  } // 首屏自动进第一个活房
+  for (const r of j.rooms) {
+    const div = document.createElement('div');
+    div.className = 'room' + (r.archived ? ' arch' : '') + (r.room_id === currentRoom ? ' sel' : '');
+    div.innerHTML = `<div class="name">${esc(r.name || r.room_id)}</div>
+      <div class="meta">${r.unread ? `<span class="unread">未读 ${r.unread}</span> · ` : ''}${esc(r.room_id.slice(0, 12))}…</div>`;
+    div.onclick = () => switchRoom(r.room_id);
+    box.appendChild(div);
+  }
+}
+function switchRoom(roomId) {
+  currentRoom = roomId; lastSeq = 0;
+  loadSlugs(); // 切房后按新房成员收窄身份下拉（E24）
+  $('stream').innerHTML = '<div class="empty"><img src="icon-256.png" alt=""><div class="et">正 在 载 入 房 讯</div><div class="es">连接中，请稍候……</div></div>';
+  grpState = { author:null, el:null, day:null }; // 切房重置分组（E25 层次化消息流）
+  attachStream();
+  refresh(true);
+}
+
+// —— 消息流：SSE 优先，断线回落轮询（2s）——
+function setConn(state) {
+  const el = $('conn');
+  el.className = state;
+  el.textContent = state === 'live' ? '● 实时' : state === 'poll' ? '◐ 轮询' : '○ 断线';
+}
+function attachStream() {
+  if (es) { es.close(); es = null; }
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  if (!currentRoom || !slug) return;
+  try {
+    es = new EventSource(`/api/rooms/${currentRoom}/stream?member=${encodeURIComponent(slug)}`);
+    es.onmessage = (ev) => {
+      let m; try { m = JSON.parse(ev.data); } catch { return; }
+      if (m.seq > lastSeq) appendMsg(m);
+      setConn('live');
+    };
+    es.onerror = () => { setConn('poll'); startPoll(); };
+  } catch { startPoll(); }
+  startPoll(); // 兜底：SSE 通了也无妨，幂等按 seq 去重
+}
+function startPoll() {
+  if (pollTimer) return;
+  pollTimer = setInterval(() => { pull(); setConn(document.querySelector('#conn').className === 'live' ? 'live' : 'poll'); }, 2000);
+}
+async function pull() {
+  if (!currentRoom || !slug) return;
+  const j = await api(`/api/rooms/${currentRoom}/messages?slug=${encodeURIComponent(slug)}&after=${lastSeq}&limit=200`);
+  if (!j.ok) { renderErr(j); return; }
+  for (const m of j.messages) appendMsg(m);
+}
+let grpState = { author:null, el:null, day:null };
+function md(s) {
+  let x = esc(String(s === undefined || s === null ? '' : s));
+  x = x.replace(/\\n/g, '\n');                       // 反斜杠 n → 真换行（主人实弹：原样显示很乱）
+  x = x.replace(/\n{3,}/g, '\n\n');               // 段间只留一个空行，不要大片留白
+  x = x.replace(/\r\n/g, '\n');
+  x = x.replace(/^### (.+)$/gm, '<div class="h3">$1</div>');
+  x = x.replace(/^## (.+)$/gm, '<div class="h3">$1</div>');
+  x = x.replace(/^# (.+)$/gm, '<div class="h3">$1</div>');
+  x = x.replace(/^\s*[-*] (.+)$/gm, '<div class="li">$1</div>');
+  x = x.replace(/^\s*\d+\. (.+)$/gm, '<div class="li">$1</div>');
+  x = x.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  x = x.replace(/`([^`]+)`/g, '<code class="ic">$1</code>');
+  x = x.replace(/^(\|.*\|)$/gm, '<div class="row">$1</div>');
+  // 段落：空行只分段，段间 4px，不再空一整行（主人：层级间留空还是太大）
+  x = x.split(/\n{2,}/).map((chunk) => {
+    const c = chunk.trim();
+    if (!c) return '';
+    if (/^<div class="(h3|li|row)"/.test(c)) return c;
+    return '<div class="p">' + c.replace(/\n/g, '<br>') + '</div>';
+  }).join('');
+  return x;
+}
+function dayKey(ts) { try { return new Date(ts).toISOString().slice(0,10); } catch { return ''; } }
+function fmtDay(ts) { try { const d = new Date(ts); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; } catch { return String(ts || ''); } }
+function appendMsg(m) {
+  if (m.seq <= lastSeq) return;
+  lastSeq = m.seq;
+  const stream = $('stream');
+  const day = dayKey(m.ts);
+  if (day && day !== grpState.day) {
+    const sep = document.createElement('div');
+    sep.className = 'daysep';
+    sep.textContent = fmtDay(m.ts);
+    stream.appendChild(sep);
+    grpState = { author:null, el:null, day };
+  }
+  const body = cleanText(m.display_text !== undefined ? m.display_text : m.text); // I39：UI 默认渲染 display_text，正文清掉内部元数据前缀
+  const mine = m.author === slug;
+  // 同一作者连续发言合并成一块；换人或隔太久就起新块（层次感的关键）
+  const sameAuthor = false; // E27：每条都显示「谁发的」，不再合并省略标签（主人：信息里看不出是谁）
+  let col;
+  if (sameAuthor) {
+    col = grpState.el.querySelector('.col');
+  } else {
+    const grp = document.createElement('div');
+    grp.className = 'grp' + (mine ? ' mine' : '');
+    const name = String(m.display_name || m.author || '?');
+    grp.innerHTML = `<div class="avatar">${esc(name.slice(0, 1))}</div><div class="col">` +
+      `<div class="who"><span class="who-name">${esc(name)}</span>${m.tag ? `<span class="tag">${esc(String(m.tag))}</span>` : ''}<span class="when" title="${esc(m.ts)}">${esc(fmtTs(m.ts))}</span></div></div>`;
+    stream.appendChild(grp);
+    col = grp.querySelector('.col');
+    grpState = { author:m.author, el:grp, day:grpState.day };
+  }
+  const line = document.createElement('div');
+  line.className = 'line';
+  // Huddo 式：引用块 / 正文气泡 / 表情回应 / 附件
+  let reply = '';
+  if (m.reply_to) {
+    const q = stream.querySelector(`[data-seq="${CSS.escape(String(m.reply_to))}"] .text`);
+    const qtxt = q ? String(q.textContent || '').replace(/\\n/g, ' ').replace(/\s+/g, ' ').slice(0, 90) : '';
+    reply = `<div class="reply"><b>回复 #${esc(String(m.reply_to))}</b> ${esc(qtxt)}${qtxt ? '…' : ''}</div>`;
+  }
+  const reacts = Array.isArray(m.reactions) ? `<div class="foot">${m.reactions.map((r) => `<span class="react">${esc(String(r.emoji || r))}${r.count ? ' ' + esc(String(r.count)) : ''}</span>`).join('')}</div>` : '';
+  const atts = Array.isArray(m.attachments) ? `<div class="foot">${m.attachments.map((a) => `<span class="attach">📎 ${esc(String(a.name || a))}</span>`).join('')}</div>` : '';
+  const ext = m.ext_id ? `<span class="ext">· 来源 ${esc(String(m.ext_id).slice(0, 12))}</span>` : '';
+  line.setAttribute('data-seq', String(m.seq));
+  line.innerHTML = reply + `<div class="text">${md(body)}</div>` + `<div class="foot"><span class="seq">#${m.seq}</span>${ext}</div>` + reacts + atts;
+  col.appendChild(line);
+  stream.scrollTop = stream.scrollHeight;
+}
+// —— 发送 ——
+async function sendMsg() {
+  const t = $('text').value.trim();
+  if (!t) { renderErr({ ok:false, code:'BAD_INPUT', message:'先在下面输入框里写点什么再发。' }); return; }
+  if (!slug) { renderErr({ ok:false, code:'BAD_INPUT', message:'先在右上角「身份」下拉里选一个身份。' }); return; }
+  if (!currentRoom) { renderErr({ ok:false, code:'NO_ROOM', message:'先在左侧点一个房间进入，再发送。' }); return; }
+  $('text').value = '';
+  const j = await api(`/api/rooms/${currentRoom}/messages`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slug, text: t }),
+  });
+  if (!j.ok) {
+    if (j.code === 'NOT_MEMBER') {
+      j.message = '当前身份不在这个房间，不能发送。请在右上角「身份」下拉里换成本房成员，下拉已为你收窄到本房名单。';
+      loadSlugs();
+    }
+    renderErr(j);
+  } else pull();
+}
+$('send').onclick = sendMsg;
+  const tb = $('theme'); if (tb) tb.onclick = () => applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+$('text').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
+
+// —— 顶部三入口 ——
+// —— E29 请智能体进帐：用户在界面上自己请，不靠命令行、不靠我代跑 ——
+const AGENT_PRESETS = {
+  'OpenCode': { exe: 'opencode-cli', args: 'run --model deepseek-api/deepseek-flash {task}' },
+  'Codex': { exe: 'codex', args: 'exec {task}' },
+  'Claude': { exe: 'claude', args: '-p {task}' },
+  '自定义': { exe: '', args: '{task}' },
+};
+async function doAgents() {
+  const box = $('p-agents');
+  // E32：列机器上所有项目房间——新建的房也必须在列，否则拉人时找不到自己刚建的房。
+  const rooms = await api('/api/rooms/all');
+  const roomList = (rooms && rooms.rooms) || [];
+  const roomOpts = roomList.map((r) => `<option value="${esc(r.room_id)}" data-owner="${esc(r.owner || '')}">${esc(r.name || r.room_id)}${r.owner ? ' · 房主：' + esc(shortName(r.owner)) : ''}</option>`).join('');
+  box.innerHTML = `
+    <div class="card">
+      <div class="h3">开一个新项目／房间</div>
+      <div style="font-size:12px;color:var(--dim2);margin:4px 0 8px">先建项目房，拿到邀请码，再把智能体请进来。</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="rm-name" placeholder="项目名（如：海钺申报、减脂私域）" style="min-width:240px">
+        <button id="rm-create" class="on">创建项目房</button>
+        <select id="rm-as"><option value="">用身份创建…</option></select>
+      </div>
+      <div id="rm-msg" class="err"></div>
+      <div id="rm-made" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="h3">请一个智能体进帐</div>
+      <div id="ag-detect" style="margin:6px 0;font-size:12px;color:var(--dim)">正在检测本机装了哪些智能体…</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:10px 0">
+        <label style="font-size:12px;color:var(--dim)">预设（自动填下面两格）
+          <select id="ag-preset" style="width:100%;margin-top:3px">${Object.keys(AGENT_PRESETS).map((k) => `<option>${k}</option>`).join('')}</select>
+        </label>
+        <label style="font-size:12px;color:var(--dim)">显示名（给它起个名字）
+          <input id="ag-name" placeholder="如：MiMo分身" style="width:100%;margin-top:3px">
+        </label>
+        <label style="font-size:12px;color:var(--dim)">拉进哪个项目房间
+          <select id="ag-room" style="width:100%;margin-top:3px">${roomOpts || '<option value="">（先建一个房间）</option>'}</select>
+        </label>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">
+        <label style="font-size:12px;color:var(--dim)">可执行文件（谁来跑）
+          <input id="ag-exe" placeholder="如 codex" style="width:100%;margin-top:3px">
+        </label>
+        <label style="font-size:12px;color:var(--dim)">参数（必须含 {task}，房讯从这进去）
+          <input id="ag-args" placeholder="如 exec {task}" style="width:100%;margin-top:3px">
+        </label>
+        <label style="font-size:12px;color:var(--dim)">唤醒策略
+          <select id="ag-wake" style="width:100%;margin-top:3px"><option value="all">全部消息</option><option value="mention">只在被@时</option></select>
+        </label>
+        <label style="font-size:12px;color:var(--dim)">超时（毫秒，真宿主要几分钟）
+          <input id="ag-timeout" type="number" value="600000" style="width:100%;margin-top:3px">
+        </label>
+      </div>
+      <div style="margin-top:12px"><button id="ag-invite" class="on">加入中军帐</button></div>
+      <div id="ag-msg" class="err"></div>
+    </div>
+    <div class="card"><div class="h3">帐内智能体</div><div id="ag-list">加载中…</div></div>`;
+
+  // 开新项目／房间：建房人即房主，建完出邀请码，接着就能拉智能体
+  const rmAs = $('rm-as');
+  if (rmAs && slug) { rmAs.innerHTML = '<option value="' + esc(slug) + '">' + esc(slug) + '（建房人/房主）</option>'; }
+  $('rm-create').onclick = async () => {
+    const msg = $('rm-msg'); msg.textContent = '';
+    const name = String($('rm-name').value || '').trim();
+    const by = String(rmAs && rmAs.value) || slug;
+    if (!by) { msg.textContent = '先在右上角选一个身份作为建房人（房主）'; return; }
+    if (!name) { msg.textContent = '先给项目房起个名字'; return; }
+    const r = await api('/api/rooms/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, by }) });
+    if (r && r.ok) {
+      msg.style.color = 'var(--ok)';
+      msg.textContent = `已开项目房「${r.name || name}」`;
+      $('rm-made').innerHTML = `<div class="card" style="margin:0"><b>${esc(r.name || name)}</b>　房号 <code class="ic">${esc(r.room_id)}</code>
+        <div style="margin-top:6px;font-size:12px;color:var(--dim2)">邀请码（凭码请智能体/成员进房）：</div>
+        <div style="font-size:20px;letter-spacing:3px;color:var(--gold);font-weight:700;margin:2px 0">${esc(r.invite_code || '')}</div>
+        <button id="rm-copy" style="cursor:pointer">复制邀请码</button>
+        <button id="rm-go" style="cursor:pointer">用它拉智能体 →</button></div>`;
+      const cp = $('rm-copy'); if (cp) cp.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(r.invite_code || ''); cp.textContent = '已复制'; };
+      const go = $('rm-go'); if (go) go.onclick = () => { $('rm-name').value = ''; refresh(true); const sel = $('ag-room'); if (sel) sel.value = r.room_id; };
+    } else {
+      msg.style.color = 'var(--bad)';
+      msg.textContent = (r && r.code ? r.code + '：' : '') + (r && r.message ? r.message : '建房失败');
+    }
+  };
+
+  const preset = $('ag-preset');
+  const fill = () => { const p = AGENT_PRESETS[preset.value]; if (p) { $('ag-exe').value = p.exe; $('ag-args').value = p.args; } };
+  preset.onchange = fill; fill();
+
+  // 本机检测：客户机器上装的智能体各不相同，探测出来供点选（不写死路径）
+  const det = await api('/api/agents/discover');
+  const list = (det && det.agents) || [];
+  $('ag-detect').innerHTML = list.length === 0
+    ? '<span class="tag-warn">本机没检测到已知智能体 CLI，可手动填「自定义」</span>'
+    : '本机检测到：<b>' + list.map((a) => esc(a.name)).join('、') + '</b>　' + list.map((a) => `<button data-exe="${esc(a.exe)}" data-name="${esc(a.name)}" style="cursor:pointer;margin-right:6px">用 ${esc(a.name)}</button>`).join('');
+  $('ag-detect').querySelectorAll('button[data-exe]').forEach((b) => {
+    b.onclick = () => { $('ag-exe').value = b.dataset.exe; if (!$('ag-name').value) $('ag-name').value = b.dataset.name + '分身'; };
+  });
+
+  // 只有帐主人（客户）能请：把身份带上，服务端校验
+  if (!slug) { $('ag-msg').textContent = '先在右上角选一个身份（须是本帐主人）才能请智能体。'; }
+
+  const refreshList = async () => {
+    const j = await api('/api/agents');
+    const rows = (j && j.agents) || [];
+    const roomNames = new Map(roomList.map((r) => [r.room_id, r.name || r.room_id]));
+    const roomOwners = new Map(roomList.map((r) => [r.room_id, r.owner || '']));
+    $('ag-list').innerHTML = rows.length === 0 ? '<div class="err">还没有智能体</div>' : rows.map((r) => `
+      <div style="padding:6px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px">
+        <b>${esc(r.name || shortName(r.slug))}</b>
+        <span class="tag">${r.wired ? '已接通' : (r.warning ? esc(r.warning.code) : '未接通')}</span>
+        <span class="when">${esc((r.rooms || []).map((x) => roomNames.get(x.room_id) || x.room_id).join('、') || '未进房')}</span>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">${(r.rooms || []).map((x) => `<button data-rm="${esc(r.slug)}" data-rmroom="${esc(x.room_id)}" data-owner="${esc(x.owner || roomOwners.get(x.room_id) || '')}" style="cursor:pointer">移出 ${esc(roomNames.get(x.room_id) || x.room_id)}</button>`).join('')}</span>
+      </div>`).join('');
+    // 移出台：请出去，不再被唤醒（身份保留，随时可再请回）
+    $('ag-list').querySelectorAll('button[data-rm]').forEach((b) => {
+      b.onclick = async () => {
+        const r2 = await api('/api/agents/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: b.dataset.rm, room_id: b.dataset.rmroom, by: b.dataset.owner || slug }) });
+        const msg = $('ag-msg');
+        if (r2 && r2.ok) { msg.style.color = 'var(--ok)'; msg.textContent = `已移出台：${r2.slug}`; refreshList(); }
+        else { msg.style.color = 'var(--bad)'; msg.textContent = (r2 && r2.message) || '移出失败'; }
+      };
+    });
+  };
+  refreshList();
+
+  $('ag-invite').onclick = async () => {
+    const msg = $('ag-msg'); msg.textContent = '';
+    const args = String($('ag-args').value || '').trim().split(/\s+/).filter(Boolean);
+    const body = {
+      name: $('ag-name').value.trim() || undefined,
+      slug: $('ag-name').value.trim() || undefined,
+      room_id: $('ag-room').value,
+      adapter_kind: 'spawn',
+      argv: [$('ag-exe').value.trim(), ...args],
+      wake_policy: $('ag-wake').value,
+      // 以该房房主身份操作：客户选哪个房，就用那个房的主人身份拉人（否则 NOT_OPERATOR）。
+      by: (($('ag-room').selectedOptions[0] || {}).dataset || {}).owner || slug,
+      timeout_ms: Number($('ag-timeout').value) || 600000,
+    };
+    if (!body.argv[0]) { msg.textContent = '先填可执行文件。'; return; }
+    if (!body.argv.some((x) => x.includes('{task}'))) { msg.textContent = '参数里必须含 {task}，房讯靠它传进去。'; return; }
+    const r = await api('/api/agents/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (r && r.ok) {
+      msg.style.color = 'var(--ok)';
+      msg.textContent = `已请进帐：${r.slug}（${r.joined}，${r.wiring && r.wiring.wired ? '已接通' : '待接通'}）`;
+      refreshList();
+    } else {
+      msg.style.color = 'var(--bad)';
+      msg.textContent = (r && r.code ? r.code + '：' : '') + (r && r.message ? r.message : '邀请失败');
+    }
+  };
+}
+document.querySelectorAll('header button[data-view]').forEach((btn) => {
+  btn.onclick = () => {
+    document.querySelectorAll('header button[data-view]').forEach((b) => b.classList.remove('on'));
+    btn.classList.add('on');
+    view = btn.dataset.view;
+    $('p-search').classList.toggle('show', view === 'search');
+    $('p-skills').classList.toggle('show', view === 'skills');
+    $('p-duty').classList.toggle('show', view === 'duty');
+    $('p-agents').classList.toggle('show', view === 'agents');
+    $('stream').style.display = view === 'rooms' ? '' : 'none';
+    $('composer').style.display = view === 'rooms' ? '' : 'none';
+    $('rooms').style.display = view === 'rooms' ? '' : 'none';
+    if (view === 'search') doSearch();
+    if (view === 'skills') doSkills();
+    if (view === 'duty') doDuty();
+    if (view === 'agents') doAgents();
+  };
+});
+async function doSearch() {
+  const q = $('q').value.trim();
+  const box = $('p-search');
+  if (!q) { box.innerHTML = '<div class="err">输入关键词后回车</div>'; return; }
+  const j = await api(`/api/search?q=${encodeURIComponent(q)}&slug=${encodeURIComponent(slug)}`);
+  if (!j.ok) { box.innerHTML = `<div class="err">${esc(j.code)}: ${esc(j.message)}</div>`; return; }
+  box.innerHTML = (j.hits || []).map((h) => `<div class="card"><b>${esc(h.room_id)} #${h.seq} ${esc(h.author)}</b><br>${esc(h.display_text !== undefined ? h.display_text : h.text)}</div>`).join('') || '<div class="err">零命中</div>';
+}
+$('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
+async function doSkills() {
+  const j = await api(`/api/skills?slug=${encodeURIComponent(slug)}`);
+  const box = $('p-skills');
+  if (!j.ok) { box.innerHTML = `<div class="err">${esc(j.code)}</div>`; return; }
+  box.innerHTML = (j.cards || []).map((c) => `<div class="card"><b>${esc(c.card_id)}</b> ${esc(c.by)}<br>${esc((c.card && c.card.problem) || '')}</div>`).join('') || '<div class="err">暂无技能卡（候选须经认可门）</div>';
+}
+async function doDuty() {
+  const j = await api(`/api/duty/board?slug=${encodeURIComponent(slug)}`);
+  const box = $('p-duty');
+  if (!j.ok) { box.innerHTML = `<div class="err">${esc(j.code)}</div>`; return; }
+  const rows = (j.members || []).map((m) => `<tr><td>${esc(m.slug)}</td><td class="${m.listening ? 'tag-ok' : 'tag-bad'}">${m.listening ? '在岗' : '失联'}</td><td>${esc(m.pending_unread ?? '')}</td><td class="${m.sla === 'late' ? 'tag-warn' : ''}">${esc(m.sla || '')}</td></tr>`).join('');
+  const orders = (j.orders || []).map((o) => `<div class="card">工单 ${esc(o.order_id)} [${esc(o.status)}] ${esc(o.title)}</div>`).join('');
+  box.innerHTML = `<table><tr><th>成员</th><th>在岗</th><th>未读</th><th>SLA</th></tr>${rows}</table>${orders}`;
+}
+
+function renderErr(j) {
+  const el = document.createElement('div');
+  el.className = 'err';
+  el.textContent = `${j.code || 'ERR'}: ${j.message || ''}${j.code === 'NOT_MEMBER' ? '（红标：非成员不可见）' : ''}`;
+  $('stream').appendChild(el);
+}
+
+async function refresh(hard) {
+  if (slug) { await loadRooms(hard); if (currentRoom) await pull(); }
+  const h = await api('/api/health');
+  const d = $('dutyline');
+  if (h && h.ok) { d.textContent = h.duty ? `监听：${h.duty}` : ''; d.classList.toggle('lost', /停|lost|未在监听/.test(String(h.duty || ''))); }
+}
+
+(async function main() {
+  await loadSlugs();
+  if (!slug) { $('stream').innerHTML = '<div class="empty"><img src="icon-256.png" alt=""><div class="et">中 军 帐 · 指 挥 台</div><div class="es">未选身份：后端 /api/members 未就绪或无身份。<br>请在右上角「身份」下拉里选择一个身份。</div></div>'; }
+  await refresh(true);
+  setInterval(() => { if (view === 'rooms') refresh(false); }, 5000);
+})();
+</script>
+</body>
+</html>

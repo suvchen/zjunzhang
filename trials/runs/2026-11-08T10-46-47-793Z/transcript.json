@@ -1,0 +1,2098 @@
+[
+  {
+    "at": "2026-11-08T10:46:47.854Z",
+    "tool": "zjz_identity_new",
+    "args": {
+      "name": "东家"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-东家-9f756bc0",
+      "keypair": {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAGmLlXKClx9fLKCnyYjPBQYenUN8NvHZh7LuIW/IhHjE=\n-----END PUBLIC KEY-----\n",
+        "privateKey": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIEzYVBzGZQcEmtQGsdrm1/rLNlqGoWa/y4MCFvGa9RER\n-----END PRIVATE KEY-----\n"
+      }
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.860Z",
+    "tool": "zjz_identity_new",
+    "args": {
+      "name": "值班Codex"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-值班codex-39824627",
+      "keypair": {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAaHUL6c9rqUjimUfB2ay9OXngoPhjbe3500LzkSF8TfU=\n-----END PUBLIC KEY-----\n",
+        "privateKey": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIGBhjz5ojZ4C1jZm7SAykCh9QhgZxIpSRGO1Vy3vyrQJ\n-----END PRIVATE KEY-----\n"
+      }
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.866Z",
+    "tool": "zjz_new",
+    "args": {
+      "name": "M3狗粮房",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "room_id": "room_dacbbc6d5d0c965f",
+      "invite_code": "ZJZ-22D7-0D1C"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.869Z",
+    "tool": "zjz_join",
+    "args": {
+      "invite": "ZJZ-22D7-0D1C",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "room_id": "room_dacbbc6d5d0c965f",
+      "member": {
+        "slug": "zjz-值班codex-39824627",
+        "role": "member",
+        "joined": "2026-11-08T10:46:47.868Z"
+      }
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.872Z",
+    "tool": "zjz_send",
+    "args": {
+      "room_id": "room_dacbbc6d5d0c965f",
+      "text": "M3 狗粮开工。",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "seq": 1,
+      "id": "msg_dc28a28e-6936-4fe3-ae53-74d7409b1eb4"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.877Z",
+    "tool": "zjz_order_dispatch",
+    "args": {
+      "project": "狗粮M3",
+      "title": "M3 工单链",
+      "deliverables": "事件流",
+      "acceptance": "一一对应",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "order_id": "ord_a3f882cb8a13561c",
+      "project": "狗粮M3",
+      "title": "M3 工单链",
+      "status": "dispatched",
+      "event": {
+        "id": "7fa4beac-e3a9-4708-b8b6-635aa73e01c8",
+        "seq": 1,
+        "at": "2026-11-08T10:46:47.875Z",
+        "project": "狗粮M3",
+        "type": "order.dispatch",
+        "actor": "zjz-东家-9f756bc0",
+        "subject": "ord_a3f882cb8a13561c",
+        "payload": {
+          "status": "dispatched",
+          "note": "",
+          "title": "M3 工单链"
+        },
+        "prev_hash": "genesis",
+        "hash": "4de4983858edc0299f21323ee5609d1fd69353eeafc1e03275c24540ab1dde5b"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.881Z",
+    "tool": "zjz_order_claim",
+    "args": {
+      "order_id": "ord_a3f882cb8a13561c",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "order_id": "ord_a3f882cb8a13561c",
+      "status": "claimed",
+      "assignee": "zjz-值班codex-39824627",
+      "claim_seq": 1,
+      "event": {
+        "id": "a88ff6ad-4d55-4f42-a7a0-d2b3c51cee3b",
+        "seq": 2,
+        "at": "2026-11-08T10:46:47.879Z",
+        "project": "狗粮M3",
+        "type": "order.claim",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "ord_a3f882cb8a13561c",
+        "payload": {
+          "status": "claimed",
+          "note": "",
+          "claim_seq": 1
+        },
+        "prev_hash": "4de4983858edc0299f21323ee5609d1fd69353eeafc1e03275c24540ab1dde5b",
+        "hash": "9d23ae4bd3e4b76b47ebbf47bf4f471c5a1eeaedbe1cae64e432d34bf54e4ded"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.886Z",
+    "tool": "zjz_order_deliver",
+    "args": {
+      "order_id": "ord_a3f882cb8a13561c",
+      "note": "已交",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "order_id": "ord_a3f882cb8a13561c",
+      "status": "delivered",
+      "assignee": "zjz-值班codex-39824627",
+      "event": {
+        "id": "7fc4a82e-9228-487f-bff3-53cbd16c53c3",
+        "seq": 3,
+        "at": "2026-11-08T10:46:47.884Z",
+        "project": "狗粮M3",
+        "type": "order.deliver",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "ord_a3f882cb8a13561c",
+        "payload": {
+          "status": "delivered",
+          "note": "已交"
+        },
+        "prev_hash": "9d23ae4bd3e4b76b47ebbf47bf4f471c5a1eeaedbe1cae64e432d34bf54e4ded",
+        "hash": "ce20d0a899a922a9dc73a12c56a146f3c57bc0ca6ac7aa994e58a7d63143228b"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.890Z",
+    "tool": "zjz_order_accept",
+    "args": {
+      "order_id": "ord_a3f882cb8a13561c",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "order_id": "ord_a3f882cb8a13561c",
+      "status": "accepted",
+      "event": {
+        "id": "cd769c8c-c998-4c9e-9d91-04313964680f",
+        "seq": 4,
+        "at": "2026-11-08T10:46:47.888Z",
+        "project": "狗粮M3",
+        "type": "order.accept",
+        "actor": "zjz-东家-9f756bc0",
+        "subject": "ord_a3f882cb8a13561c",
+        "payload": {
+          "status": "accepted",
+          "note": ""
+        },
+        "prev_hash": "ce20d0a899a922a9dc73a12c56a146f3c57bc0ca6ac7aa994e58a7d63143228b",
+        "hash": "667a7151d177a65d2df4f98a54cfae31c6223e0cb076503650d39b875251ccf3"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.894Z",
+    "tool": "zjz_order_close",
+    "args": {
+      "order_id": "ord_a3f882cb8a13561c",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "order_id": "ord_a3f882cb8a13561c",
+      "status": "closed",
+      "event": {
+        "id": "8c402e1a-c7fa-4497-bab7-24d7e48658af",
+        "seq": 5,
+        "at": "2026-11-08T10:46:47.892Z",
+        "project": "狗粮M3",
+        "type": "order.close",
+        "actor": "zjz-东家-9f756bc0",
+        "subject": "ord_a3f882cb8a13561c",
+        "payload": {
+          "status": "closed",
+          "note": ""
+        },
+        "prev_hash": "667a7151d177a65d2df4f98a54cfae31c6223e0cb076503650d39b875251ccf3",
+        "hash": "251c01c1e2a7acd6ac8fd934a35d61e68adc58276ee33aaf2f9a3ac289f76ab2"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.899Z",
+    "tool": "zjz_qc_open",
+    "args": {
+      "project": "狗粮M3",
+      "title": "M3 质检台账",
+      "variable_layer": "参数层",
+      "gates": [
+        "frame",
+        "audio"
+      ],
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "case_id": "qc_bdf91e199768",
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "open",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [],
+        "machine_checks": [],
+        "human_verdict": null,
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.896Z"
+      },
+      "event": {
+        "id": "8d2377ad-722f-4fcb-9efc-308557016891",
+        "seq": 6,
+        "at": "2026-11-08T10:46:47.898Z",
+        "project": "狗粮M3",
+        "type": "qc.open",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "title": "M3 质检台账",
+          "variable_layer": "参数层",
+          "baseline_ref": null,
+          "gates": [
+            "frame",
+            "audio"
+          ]
+        },
+        "prev_hash": "251c01c1e2a7acd6ac8fd934a35d61e68adc58276ee33aaf2f9a3ac289f76ab2",
+        "hash": "56d8c41caa7eb8f0bf77aadcabaa47f0338433d4f935e6b844cec11a13a79798"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.904Z",
+    "tool": "zjz_qc_attach",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+      "role": "baseline",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "collecting",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          }
+        ],
+        "machine_checks": [],
+        "human_verdict": null,
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.901Z"
+      },
+      "evidence": {
+        "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+        "role": "baseline",
+        "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+        "bytes": 14,
+        "note": "",
+        "attached_at": "2026-11-08T10:46:47.901Z",
+        "attached_by": "zjz-值班codex-39824627"
+      },
+      "event": {
+        "id": "1a1db70e-42ae-4fb1-960b-bcf51a09fc55",
+        "seq": 7,
+        "at": "2026-11-08T10:46:47.903Z",
+        "project": "狗粮M3",
+        "type": "qc.attach",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "role": "baseline",
+          "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+          "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+          "bytes": 14,
+          "allow_same": false,
+          "reason": null,
+          "exemption": false
+        },
+        "prev_hash": "56d8c41caa7eb8f0bf77aadcabaa47f0338433d4f935e6b844cec11a13a79798",
+        "hash": "2a5393044d6af22f752235399225e503acceba2de511a65e4049d768b641f837"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.909Z",
+    "tool": "zjz_qc_attach",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+      "role": "candidate",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "collecting",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "role": "candidate",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.905Z",
+            "attached_by": "zjz-值班codex-39824627"
+          }
+        ],
+        "machine_checks": [],
+        "human_verdict": null,
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.905Z"
+      },
+      "evidence": {
+        "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+        "role": "candidate",
+        "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+        "bytes": 15,
+        "note": "",
+        "attached_at": "2026-11-08T10:46:47.905Z",
+        "attached_by": "zjz-值班codex-39824627"
+      },
+      "event": {
+        "id": "877fd179-443c-4aeb-b8d2-37c66be53cf3",
+        "seq": 8,
+        "at": "2026-11-08T10:46:47.907Z",
+        "project": "狗粮M3",
+        "type": "qc.attach",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "role": "candidate",
+          "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+          "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+          "bytes": 15,
+          "allow_same": false,
+          "reason": null,
+          "exemption": false
+        },
+        "prev_hash": "2a5393044d6af22f752235399225e503acceba2de511a65e4049d768b641f837",
+        "hash": "dab1757a881e8283b527b4fb756ff9c051659d01db358d95f6eb6061098c2691"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.910Z",
+    "tool": "zjz_qc_attach",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+      "role": "fixed",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": false,
+      "code": "EVIDENCE_DUPLICATE",
+      "message": "同一哈希已用于其它角色（E5）；合法复用需 allow_same + reason",
+      "conflict": {
+        "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+        "role": "baseline",
+        "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+        "bytes": 14,
+        "note": "",
+        "attached_at": "2026-11-08T10:46:47.901Z",
+        "attached_by": "zjz-值班codex-39824627"
+      }
+    },
+    "isError": true
+  },
+  {
+    "at": "2026-11-08T10:46:47.914Z",
+    "tool": "zjz_qc_attach",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+      "role": "fixed",
+      "allow_same": true,
+      "reason": "同一源文件复用为修复前后对照",
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "collecting",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "role": "candidate",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.905Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "role": "fixed",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.911Z",
+            "attached_by": "zjz-值班codex-39824627",
+            "same_hash_exemption": {
+              "reason": "同一源文件复用为修复前后对照",
+              "at": "2026-11-08T10:46:47.911Z",
+              "actor": "zjz-值班codex-39824627"
+            }
+          }
+        ],
+        "machine_checks": [],
+        "human_verdict": null,
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.911Z"
+      },
+      "evidence": {
+        "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+        "role": "fixed",
+        "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+        "bytes": 14,
+        "note": "",
+        "attached_at": "2026-11-08T10:46:47.911Z",
+        "attached_by": "zjz-值班codex-39824627",
+        "same_hash_exemption": {
+          "reason": "同一源文件复用为修复前后对照",
+          "at": "2026-11-08T10:46:47.911Z",
+          "actor": "zjz-值班codex-39824627"
+        }
+      },
+      "event": {
+        "id": "0c760fa2-190d-4b00-b7be-972a7e5cdce9",
+        "seq": 9,
+        "at": "2026-11-08T10:46:47.912Z",
+        "project": "狗粮M3",
+        "type": "qc.attach",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "role": "fixed",
+          "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+          "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+          "bytes": 14,
+          "allow_same": true,
+          "reason": "同一源文件复用为修复前后对照",
+          "exemption": true
+        },
+        "prev_hash": "dab1757a881e8283b527b4fb756ff9c051659d01db358d95f6eb6061098c2691",
+        "hash": "a7fa8123a49dee7874f747aff7eb31477f3293aa87e05167a42c5df92cf000a9"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.918Z",
+    "tool": "zjz_qc_machine",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "gate": "frame",
+      "result": "pass",
+      "metrics": {
+        "fps": 24
+      },
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "machine_checked",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "role": "candidate",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.905Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "role": "fixed",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.911Z",
+            "attached_by": "zjz-值班codex-39824627",
+            "same_hash_exemption": {
+              "reason": "同一源文件复用为修复前后对照",
+              "at": "2026-11-08T10:46:47.911Z",
+              "actor": "zjz-值班codex-39824627"
+            }
+          }
+        ],
+        "machine_checks": [
+          {
+            "gate": "frame",
+            "result": "pass",
+            "metrics": {
+              "fps": 24
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.915Z"
+          }
+        ],
+        "human_verdict": null,
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.915Z"
+      },
+      "check": {
+        "gate": "frame",
+        "result": "pass",
+        "metrics": {
+          "fps": 24
+        },
+        "checker": "zjz-值班codex-39824627",
+        "independent": false,
+        "at": "2026-11-08T10:46:47.915Z"
+      },
+      "aggregate": {
+        "machine": "insufficient",
+        "human": null,
+        "gates": {
+          "frame": "pass"
+        }
+      },
+      "event": {
+        "id": "be09fed5-b25b-4a71-8f48-3a726f9d7d6a",
+        "seq": 10,
+        "at": "2026-11-08T10:46:47.916Z",
+        "project": "狗粮M3",
+        "type": "qc.machine",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "gate": "frame",
+          "result": "pass",
+          "metrics": {
+            "fps": 24
+          },
+          "checker": "zjz-值班codex-39824627",
+          "independent": false
+        },
+        "prev_hash": "a7fa8123a49dee7874f747aff7eb31477f3293aa87e05167a42c5df92cf000a9",
+        "hash": "7f0a668e2811a99025a66ffba5800327cf58911118244b9c05f6a3cfb19f1835"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.921Z",
+    "tool": "zjz_qc_machine",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "gate": "audio",
+      "result": "pass",
+      "metrics": {
+        "f0": 149.5
+      },
+      "slug": "zjz-值班codex-39824627"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "machine_checked",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "role": "candidate",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.905Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "role": "fixed",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.911Z",
+            "attached_by": "zjz-值班codex-39824627",
+            "same_hash_exemption": {
+              "reason": "同一源文件复用为修复前后对照",
+              "at": "2026-11-08T10:46:47.911Z",
+              "actor": "zjz-值班codex-39824627"
+            }
+          }
+        ],
+        "machine_checks": [
+          {
+            "gate": "frame",
+            "result": "pass",
+            "metrics": {
+              "fps": 24
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.915Z"
+          },
+          {
+            "gate": "audio",
+            "result": "pass",
+            "metrics": {
+              "f0": 149.5
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.919Z"
+          }
+        ],
+        "human_verdict": null,
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.919Z"
+      },
+      "check": {
+        "gate": "audio",
+        "result": "pass",
+        "metrics": {
+          "f0": 149.5
+        },
+        "checker": "zjz-值班codex-39824627",
+        "independent": false,
+        "at": "2026-11-08T10:46:47.919Z"
+      },
+      "aggregate": {
+        "machine": "pass",
+        "human": null,
+        "gates": {
+          "frame": "pass",
+          "audio": "pass"
+        }
+      },
+      "event": {
+        "id": "fa8d3268-172a-4b35-88fa-59288f978986",
+        "seq": 11,
+        "at": "2026-11-08T10:46:47.920Z",
+        "project": "狗粮M3",
+        "type": "qc.machine",
+        "actor": "zjz-值班codex-39824627",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "gate": "audio",
+          "result": "pass",
+          "metrics": {
+            "f0": 149.5
+          },
+          "checker": "zjz-值班codex-39824627",
+          "independent": false
+        },
+        "prev_hash": "7f0a668e2811a99025a66ffba5800327cf58911118244b9c05f6a3cfb19f1835",
+        "hash": "02fb513861773ced9df91ef03b516f57f91b4629a2437474ed3da65ff167eaae"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.926Z",
+    "tool": "zjz_qc_human",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "verdict": "pass",
+      "note": "东家耳审",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "human_verdict",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "role": "candidate",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.905Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "role": "fixed",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.911Z",
+            "attached_by": "zjz-值班codex-39824627",
+            "same_hash_exemption": {
+              "reason": "同一源文件复用为修复前后对照",
+              "at": "2026-11-08T10:46:47.911Z",
+              "actor": "zjz-值班codex-39824627"
+            }
+          }
+        ],
+        "machine_checks": [
+          {
+            "gate": "frame",
+            "result": "pass",
+            "metrics": {
+              "fps": 24
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.915Z"
+          },
+          {
+            "gate": "audio",
+            "result": "pass",
+            "metrics": {
+              "f0": 149.5
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.919Z"
+          }
+        ],
+        "human_verdict": {
+          "verdict": "pass",
+          "note": "东家耳审",
+          "actor": "zjz-东家-9f756bc0",
+          "at": "2026-11-08T10:46:47.923Z"
+        },
+        "phenomenon": null,
+        "attribution_layer": null,
+        "fix": null,
+        "repro_count": 0,
+        "repro_note": "",
+        "conclusion": null,
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.923Z"
+      },
+      "aggregate": {
+        "machine": "pass",
+        "human": "pass",
+        "gates": {
+          "frame": "pass",
+          "audio": "pass"
+        }
+      },
+      "event": {
+        "id": "66b51c54-7167-424a-a92f-4adaf935d846",
+        "seq": 12,
+        "at": "2026-11-08T10:46:47.925Z",
+        "project": "狗粮M3",
+        "type": "qc.human",
+        "actor": "zjz-东家-9f756bc0",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "verdict": "pass",
+          "note": "东家耳审"
+        },
+        "prev_hash": "02fb513861773ced9df91ef03b516f57f91b4629a2437474ed3da65ff167eaae",
+        "hash": "1608aac568cc72d7a57cd5bd8d29a4e34081bf3719299b08b26bdcb2f6810df4"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.931Z",
+    "tool": "zjz_qc_close",
+    "args": {
+      "case_id": "qc_bdf91e199768",
+      "phenomenon": "表情木",
+      "attribution_layer": "参数层",
+      "fix": "16 步 + 克隆音频",
+      "repro_count": 2,
+      "repro_note": "两次同结果",
+      "conclusion": "baseline",
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "case": {
+        "case_id": "qc_bdf91e199768",
+        "project": "狗粮M3",
+        "title": "M3 质检台账",
+        "status": "closed",
+        "variable_layer": "参数层",
+        "baseline_ref": null,
+        "gates": [
+          "frame",
+          "audio"
+        ],
+        "evidence": [
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "role": "baseline",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.901Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "role": "candidate",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.905Z",
+            "attached_by": "zjz-值班codex-39824627"
+          },
+          {
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "role": "fixed",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "note": "",
+            "attached_at": "2026-11-08T10:46:47.911Z",
+            "attached_by": "zjz-值班codex-39824627",
+            "same_hash_exemption": {
+              "reason": "同一源文件复用为修复前后对照",
+              "at": "2026-11-08T10:46:47.911Z",
+              "actor": "zjz-值班codex-39824627"
+            }
+          }
+        ],
+        "machine_checks": [
+          {
+            "gate": "frame",
+            "result": "pass",
+            "metrics": {
+              "fps": 24
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.915Z"
+          },
+          {
+            "gate": "audio",
+            "result": "pass",
+            "metrics": {
+              "f0": 149.5
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false,
+            "at": "2026-11-08T10:46:47.919Z"
+          }
+        ],
+        "human_verdict": {
+          "verdict": "pass",
+          "note": "东家耳审",
+          "actor": "zjz-东家-9f756bc0",
+          "at": "2026-11-08T10:46:47.923Z"
+        },
+        "phenomenon": "表情木",
+        "attribution_layer": "参数层",
+        "fix": "16 步 + 克隆音频",
+        "repro_count": 2,
+        "repro_note": "两次同结果",
+        "conclusion": "baseline",
+        "owner": "zjz-值班codex-39824627",
+        "created_at": "2026-11-08T10:46:47.896Z",
+        "updated_at": "2026-11-08T10:46:47.928Z",
+        "closed_at": "2026-11-08T10:46:47.928Z"
+      },
+      "aggregate": {
+        "machine": "pass",
+        "human": "pass",
+        "gates": {
+          "frame": "pass",
+          "audio": "pass"
+        }
+      },
+      "event": {
+        "id": "ac5d5352-30e1-4b08-a66d-545a7a02bcc9",
+        "seq": 13,
+        "at": "2026-11-08T10:46:47.929Z",
+        "project": "狗粮M3",
+        "type": "qc.close",
+        "actor": "zjz-东家-9f756bc0",
+        "subject": "qc_bdf91e199768",
+        "payload": {
+          "phenomenon": "表情木",
+          "attribution_layer": "参数层",
+          "fix": "16 步 + 克隆音频",
+          "repro_count": 2,
+          "repro_note": "两次同结果",
+          "conclusion": "baseline"
+        },
+        "prev_hash": "1608aac568cc72d7a57cd5bd8d29a4e34081bf3719299b08b26bdcb2f6810df4",
+        "hash": "f2df304d0bd260e655521908d73ba10a50235821fbf07e5166d1052c8417a22b"
+      },
+      "event_error": null
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.932Z",
+    "tool": "zjz_qc_verify",
+    "args": {
+      "case_id": "qc_bdf91e199768"
+    },
+    "result": {
+      "ok": true,
+      "case_id": "qc_bdf91e199768",
+      "checked": 3,
+      "intact": true,
+      "mismatches": []
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.932Z",
+    "tool": "zjz_qc_summary",
+    "args": {
+      "case_id": "qc_bdf91e199768"
+    },
+    "result": {
+      "ok": true,
+      "case_id": "qc_bdf91e199768",
+      "summary": "表情木→参数层→16 步 + 克隆音频→2（两次同结果）",
+      "conclusion": "baseline",
+      "status": "closed"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:47.933Z",
+    "tool": "zjz_event_list",
+    "args": {
+      "project": "狗粮M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "狗粮M3",
+      "events": [
+        {
+          "id": "7fa4beac-e3a9-4708-b8b6-635aa73e01c8",
+          "seq": 1,
+          "at": "2026-11-08T10:46:47.875Z",
+          "project": "狗粮M3",
+          "type": "order.dispatch",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "dispatched",
+            "note": "",
+            "title": "M3 工单链"
+          },
+          "prev_hash": "genesis",
+          "hash": "4de4983858edc0299f21323ee5609d1fd69353eeafc1e03275c24540ab1dde5b"
+        },
+        {
+          "id": "a88ff6ad-4d55-4f42-a7a0-d2b3c51cee3b",
+          "seq": 2,
+          "at": "2026-11-08T10:46:47.879Z",
+          "project": "狗粮M3",
+          "type": "order.claim",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "claimed",
+            "note": "",
+            "claim_seq": 1
+          },
+          "prev_hash": "4de4983858edc0299f21323ee5609d1fd69353eeafc1e03275c24540ab1dde5b",
+          "hash": "9d23ae4bd3e4b76b47ebbf47bf4f471c5a1eeaedbe1cae64e432d34bf54e4ded"
+        },
+        {
+          "id": "7fc4a82e-9228-487f-bff3-53cbd16c53c3",
+          "seq": 3,
+          "at": "2026-11-08T10:46:47.884Z",
+          "project": "狗粮M3",
+          "type": "order.deliver",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "delivered",
+            "note": "已交"
+          },
+          "prev_hash": "9d23ae4bd3e4b76b47ebbf47bf4f471c5a1eeaedbe1cae64e432d34bf54e4ded",
+          "hash": "ce20d0a899a922a9dc73a12c56a146f3c57bc0ca6ac7aa994e58a7d63143228b"
+        },
+        {
+          "id": "cd769c8c-c998-4c9e-9d91-04313964680f",
+          "seq": 4,
+          "at": "2026-11-08T10:46:47.888Z",
+          "project": "狗粮M3",
+          "type": "order.accept",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "accepted",
+            "note": ""
+          },
+          "prev_hash": "ce20d0a899a922a9dc73a12c56a146f3c57bc0ca6ac7aa994e58a7d63143228b",
+          "hash": "667a7151d177a65d2df4f98a54cfae31c6223e0cb076503650d39b875251ccf3"
+        },
+        {
+          "id": "8c402e1a-c7fa-4497-bab7-24d7e48658af",
+          "seq": 5,
+          "at": "2026-11-08T10:46:47.892Z",
+          "project": "狗粮M3",
+          "type": "order.close",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "closed",
+            "note": ""
+          },
+          "prev_hash": "667a7151d177a65d2df4f98a54cfae31c6223e0cb076503650d39b875251ccf3",
+          "hash": "251c01c1e2a7acd6ac8fd934a35d61e68adc58276ee33aaf2f9a3ac289f76ab2"
+        },
+        {
+          "id": "8d2377ad-722f-4fcb-9efc-308557016891",
+          "seq": 6,
+          "at": "2026-11-08T10:46:47.898Z",
+          "project": "狗粮M3",
+          "type": "qc.open",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "title": "M3 质检台账",
+            "variable_layer": "参数层",
+            "baseline_ref": null,
+            "gates": [
+              "frame",
+              "audio"
+            ]
+          },
+          "prev_hash": "251c01c1e2a7acd6ac8fd934a35d61e68adc58276ee33aaf2f9a3ac289f76ab2",
+          "hash": "56d8c41caa7eb8f0bf77aadcabaa47f0338433d4f935e6b844cec11a13a79798"
+        },
+        {
+          "id": "1a1db70e-42ae-4fb1-960b-bcf51a09fc55",
+          "seq": 7,
+          "at": "2026-11-08T10:46:47.903Z",
+          "project": "狗粮M3",
+          "type": "qc.attach",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "role": "baseline",
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "allow_same": false,
+            "reason": null,
+            "exemption": false
+          },
+          "prev_hash": "56d8c41caa7eb8f0bf77aadcabaa47f0338433d4f935e6b844cec11a13a79798",
+          "hash": "2a5393044d6af22f752235399225e503acceba2de511a65e4049d768b641f837"
+        },
+        {
+          "id": "877fd179-443c-4aeb-b8d2-37c66be53cf3",
+          "seq": 8,
+          "at": "2026-11-08T10:46:47.907Z",
+          "project": "狗粮M3",
+          "type": "qc.attach",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "role": "candidate",
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "allow_same": false,
+            "reason": null,
+            "exemption": false
+          },
+          "prev_hash": "2a5393044d6af22f752235399225e503acceba2de511a65e4049d768b641f837",
+          "hash": "dab1757a881e8283b527b4fb756ff9c051659d01db358d95f6eb6061098c2691"
+        },
+        {
+          "id": "0c760fa2-190d-4b00-b7be-972a7e5cdce9",
+          "seq": 9,
+          "at": "2026-11-08T10:46:47.912Z",
+          "project": "狗粮M3",
+          "type": "qc.attach",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "role": "fixed",
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "allow_same": true,
+            "reason": "同一源文件复用为修复前后对照",
+            "exemption": true
+          },
+          "prev_hash": "dab1757a881e8283b527b4fb756ff9c051659d01db358d95f6eb6061098c2691",
+          "hash": "a7fa8123a49dee7874f747aff7eb31477f3293aa87e05167a42c5df92cf000a9"
+        },
+        {
+          "id": "be09fed5-b25b-4a71-8f48-3a726f9d7d6a",
+          "seq": 10,
+          "at": "2026-11-08T10:46:47.916Z",
+          "project": "狗粮M3",
+          "type": "qc.machine",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "gate": "frame",
+            "result": "pass",
+            "metrics": {
+              "fps": 24
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false
+          },
+          "prev_hash": "a7fa8123a49dee7874f747aff7eb31477f3293aa87e05167a42c5df92cf000a9",
+          "hash": "7f0a668e2811a99025a66ffba5800327cf58911118244b9c05f6a3cfb19f1835"
+        },
+        {
+          "id": "fa8d3268-172a-4b35-88fa-59288f978986",
+          "seq": 11,
+          "at": "2026-11-08T10:46:47.920Z",
+          "project": "狗粮M3",
+          "type": "qc.machine",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "gate": "audio",
+            "result": "pass",
+            "metrics": {
+              "f0": 149.5
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false
+          },
+          "prev_hash": "7f0a668e2811a99025a66ffba5800327cf58911118244b9c05f6a3cfb19f1835",
+          "hash": "02fb513861773ced9df91ef03b516f57f91b4629a2437474ed3da65ff167eaae"
+        },
+        {
+          "id": "66b51c54-7167-424a-a92f-4adaf935d846",
+          "seq": 12,
+          "at": "2026-11-08T10:46:47.925Z",
+          "project": "狗粮M3",
+          "type": "qc.human",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "verdict": "pass",
+            "note": "东家耳审"
+          },
+          "prev_hash": "02fb513861773ced9df91ef03b516f57f91b4629a2437474ed3da65ff167eaae",
+          "hash": "1608aac568cc72d7a57cd5bd8d29a4e34081bf3719299b08b26bdcb2f6810df4"
+        },
+        {
+          "id": "ac5d5352-30e1-4b08-a66d-545a7a02bcc9",
+          "seq": 13,
+          "at": "2026-11-08T10:46:47.929Z",
+          "project": "狗粮M3",
+          "type": "qc.close",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "phenomenon": "表情木",
+            "attribution_layer": "参数层",
+            "fix": "16 步 + 克隆音频",
+            "repro_count": 2,
+            "repro_note": "两次同结果",
+            "conclusion": "baseline"
+          },
+          "prev_hash": "1608aac568cc72d7a57cd5bd8d29a4e34081bf3719299b08b26bdcb2f6810df4",
+          "hash": "f2df304d0bd260e655521908d73ba10a50235821fbf07e5166d1052c8417a22b"
+        }
+      ],
+      "last_seq": 13
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.048Z",
+    "tool": "zjz_event_list",
+    "args": {
+      "project": "并发M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "并发M3",
+      "events": [
+        {
+          "id": "8523eb90-a046-49ff-b38b-8b07c4512766",
+          "seq": 1,
+          "at": "2026-11-08T10:46:47.977Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-21288",
+          "subject": "并发M3",
+          "payload": {
+            "i": 0
+          },
+          "prev_hash": "genesis",
+          "hash": "bc35b6c2d40214ce72fa1dcab43ff72cc01602054bb265e5664215199cc7390d"
+        },
+        {
+          "id": "246ec0d3-2846-47ef-b35c-1d51e96f8c31",
+          "seq": 2,
+          "at": "2026-11-08T10:46:47.982Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-21288",
+          "subject": "并发M3",
+          "payload": {
+            "i": 1
+          },
+          "prev_hash": "bc35b6c2d40214ce72fa1dcab43ff72cc01602054bb265e5664215199cc7390d",
+          "hash": "67b59257a279168e397538b2b853d57905520d2836f7eca3e0cff450086440c5"
+        },
+        {
+          "id": "bb1df686-44b2-470f-bb21-2cc23e1a9438",
+          "seq": 3,
+          "at": "2026-11-08T10:46:47.985Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-21288",
+          "subject": "并发M3",
+          "payload": {
+            "i": 2
+          },
+          "prev_hash": "67b59257a279168e397538b2b853d57905520d2836f7eca3e0cff450086440c5",
+          "hash": "057816e9a1c40af1f3ae0d64d9d502a3edfc7cd336234161d0e076551ec3d45f"
+        },
+        {
+          "id": "d289725c-4488-401b-abf4-20665af08275",
+          "seq": 4,
+          "at": "2026-11-08T10:46:47.987Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-21288",
+          "subject": "并发M3",
+          "payload": {
+            "i": 3
+          },
+          "prev_hash": "057816e9a1c40af1f3ae0d64d9d502a3edfc7cd336234161d0e076551ec3d45f",
+          "hash": "abcc21091ff0c9efb0a8b9487585ca20e63410f6344c45de539297487d1483b4"
+        },
+        {
+          "id": "e988c421-ed5b-4b7f-8585-205f6119cd3e",
+          "seq": 5,
+          "at": "2026-11-08T10:46:47.989Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-21288",
+          "subject": "并发M3",
+          "payload": {
+            "i": 4
+          },
+          "prev_hash": "abcc21091ff0c9efb0a8b9487585ca20e63410f6344c45de539297487d1483b4",
+          "hash": "87b0cc0052128c9aa409ef4807af532d6b802608bd1d0b983c1ce4be20a0f96c"
+        },
+        {
+          "id": "e514dd63-08c2-42c6-9fb9-f758f8974822",
+          "seq": 6,
+          "at": "2026-11-08T10:46:47.999Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-30180",
+          "subject": "并发M3",
+          "payload": {
+            "i": 0
+          },
+          "prev_hash": "87b0cc0052128c9aa409ef4807af532d6b802608bd1d0b983c1ce4be20a0f96c",
+          "hash": "3c1c572412f38ba6f270b179dc06b13707726b7394f4f8713d6c4b47c5c89a27"
+        },
+        {
+          "id": "1663b8db-f1c7-4be6-bc64-fa53f589bc01",
+          "seq": 7,
+          "at": "2026-11-08T10:46:48.003Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-30180",
+          "subject": "并发M3",
+          "payload": {
+            "i": 1
+          },
+          "prev_hash": "3c1c572412f38ba6f270b179dc06b13707726b7394f4f8713d6c4b47c5c89a27",
+          "hash": "7eed0c9d1da9a76e391e0f2123a4aa14b3074c60714bba5b1b3ca114d2a4b8be"
+        },
+        {
+          "id": "717f11d3-cd9e-40fa-ab26-51de467f18a9",
+          "seq": 8,
+          "at": "2026-11-08T10:46:48.005Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-30180",
+          "subject": "并发M3",
+          "payload": {
+            "i": 2
+          },
+          "prev_hash": "7eed0c9d1da9a76e391e0f2123a4aa14b3074c60714bba5b1b3ca114d2a4b8be",
+          "hash": "e043b8ea29abba981f9e9b8dff9522249f821174bd56368eeed7c8e1afc6e9d3"
+        },
+        {
+          "id": "e5369b5c-67a1-4b58-a28d-6c2e793e9697",
+          "seq": 9,
+          "at": "2026-11-08T10:46:48.007Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-30180",
+          "subject": "并发M3",
+          "payload": {
+            "i": 3
+          },
+          "prev_hash": "e043b8ea29abba981f9e9b8dff9522249f821174bd56368eeed7c8e1afc6e9d3",
+          "hash": "655d3df8a450481aab23000ed5e985f22d724ed028e63f41ad35cbef04bed04f"
+        },
+        {
+          "id": "0b8ea5bb-fec0-4f92-a0c3-61a07776fd68",
+          "seq": 10,
+          "at": "2026-11-08T10:46:48.009Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-30180",
+          "subject": "并发M3",
+          "payload": {
+            "i": 4
+          },
+          "prev_hash": "655d3df8a450481aab23000ed5e985f22d724ed028e63f41ad35cbef04bed04f",
+          "hash": "2e5c8458891ec5e9869de3fd6dfcd2f28dfb5cfd30da8cecc7ad5df72466430b"
+        },
+        {
+          "id": "05e29425-c52e-49bc-946c-44e2762c7f0a",
+          "seq": 11,
+          "at": "2026-11-08T10:46:48.026Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-34468",
+          "subject": "并发M3",
+          "payload": {
+            "i": 0
+          },
+          "prev_hash": "2e5c8458891ec5e9869de3fd6dfcd2f28dfb5cfd30da8cecc7ad5df72466430b",
+          "hash": "8edb37f92226e985463f1690ef33785bcd510669455aab0df797a31f4baefa60"
+        },
+        {
+          "id": "01b3ba54-5b4b-4195-b861-90162aefe48b",
+          "seq": 12,
+          "at": "2026-11-08T10:46:48.031Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-34468",
+          "subject": "并发M3",
+          "payload": {
+            "i": 1
+          },
+          "prev_hash": "8edb37f92226e985463f1690ef33785bcd510669455aab0df797a31f4baefa60",
+          "hash": "462cd94984f4b46c4d721e27b3775475a74fed68ebb7e09fcc996752db7d8f92"
+        },
+        {
+          "id": "3a3be503-e6a3-4802-a6d1-df9b4d6924a5",
+          "seq": 13,
+          "at": "2026-11-08T10:46:48.034Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-34468",
+          "subject": "并发M3",
+          "payload": {
+            "i": 2
+          },
+          "prev_hash": "462cd94984f4b46c4d721e27b3775475a74fed68ebb7e09fcc996752db7d8f92",
+          "hash": "b391fcb1adf6e0c75861966d12c79bd1c9806f2c362692642f1a05336dd1cf95"
+        },
+        {
+          "id": "9b0e3141-bd28-4a5e-a5c3-808453037952",
+          "seq": 14,
+          "at": "2026-11-08T10:46:48.036Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-34468",
+          "subject": "并发M3",
+          "payload": {
+            "i": 3
+          },
+          "prev_hash": "b391fcb1adf6e0c75861966d12c79bd1c9806f2c362692642f1a05336dd1cf95",
+          "hash": "410b317ebf84afc0c11ec63192fec95032150dc36d65e83494ba73cb8c73c70a"
+        },
+        {
+          "id": "9f1a0c57-f544-49c0-99fd-ef5be92c64f0",
+          "seq": 15,
+          "at": "2026-11-08T10:46:48.038Z",
+          "project": "并发M3",
+          "type": "probe",
+          "actor": "child-34468",
+          "subject": "并发M3",
+          "payload": {
+            "i": 4
+          },
+          "prev_hash": "410b317ebf84afc0c11ec63192fec95032150dc36d65e83494ba73cb8c73c70a",
+          "hash": "55c228b5d7c1a39ffef037d9892c4905ab7e12f86cb08a53b4a2e0a3e885743c"
+        }
+      ],
+      "last_seq": 15
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.049Z",
+    "tool": "zjz_event_verify",
+    "args": {
+      "project": "并发M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "并发M3",
+      "intact": true,
+      "events": 15,
+      "last_seq": 15,
+      "last_hash": "55c228b5d7c1a39ffef037d9892c4905ab7e12f86cb08a53b4a2e0a3e885743c"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.051Z",
+    "tool": "zjz_event_verify",
+    "args": {
+      "project": "并发M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "并发M3",
+      "intact": false,
+      "broken_at": 1,
+      "reason": "hash",
+      "events": 15
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.052Z",
+    "tool": "zjz_event_verify",
+    "args": {
+      "project": "并发M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "并发M3",
+      "intact": true,
+      "events": 15,
+      "last_seq": 15,
+      "last_hash": "55c228b5d7c1a39ffef037d9892c4905ab7e12f86cb08a53b4a2e0a3e885743c"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.054Z",
+    "tool": "zjz_duty_set",
+    "args": {
+      "slug": "zjz-东家-9f756bc0",
+      "mode": "oncall",
+      "project": "狗粮M3",
+      "watchdog": {
+        "successor": "zjz-值班codex-39824627",
+        "max_age_ms": 1000,
+        "check_ms": 1000
+      }
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-东家-9f756bc0",
+      "mode": "oncall",
+      "project": "狗粮M3",
+      "schedule": [],
+      "checkpoint": null,
+      "watchdog": {
+        "enabled": true,
+        "successor": "zjz-值班codex-39824627",
+        "max_age_ms": 1000,
+        "check_ms": 1000
+      },
+      "heartbeat_at": "2026-11-08T10:46:48.053Z"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.055Z",
+    "tool": "zjz_duty_set",
+    "args": {
+      "slug": "zjz-值班codex-39824627",
+      "mode": "listen",
+      "project": "狗粮M3"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-值班codex-39824627",
+      "mode": "listen",
+      "project": "狗粮M3",
+      "schedule": [],
+      "checkpoint": null,
+      "watchdog": null,
+      "heartbeat_at": "2026-11-08T10:46:48.054Z"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.057Z",
+    "tool": "zjz_duty_heartbeat",
+    "args": {
+      "slug": "zjz-东家-9f756bc0"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-东家-9f756bc0",
+      "heartbeat_at": "2026-11-08T10:46:48.056Z",
+      "mode": "oncall"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.068Z",
+    "tool": "zjz_watchdog_tick",
+    "args": {
+      "now": 1794134868057
+    },
+    "result": {
+      "ok": true,
+      "checked": 1,
+      "shifted": [
+        {
+          "from": "zjz-东家-9f756bc0",
+          "to": "zjz-值班codex-39824627",
+          "checkpoint": {
+            "rooms": {
+              "room_dacbbc6d5d0c965f": 0
+            },
+            "ts": "2026-11-08T10:46:48.059Z",
+            "from": "zjz-东家-9f756bc0"
+          },
+          "age_ms": 60001
+        }
+      ],
+      "alerts": []
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.068Z",
+    "tool": "zjz_event_list",
+    "args": {
+      "project": "狗粮M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "狗粮M3",
+      "events": [
+        {
+          "id": "7fa4beac-e3a9-4708-b8b6-635aa73e01c8",
+          "seq": 1,
+          "at": "2026-11-08T10:46:47.875Z",
+          "project": "狗粮M3",
+          "type": "order.dispatch",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "dispatched",
+            "note": "",
+            "title": "M3 工单链"
+          },
+          "prev_hash": "genesis",
+          "hash": "4de4983858edc0299f21323ee5609d1fd69353eeafc1e03275c24540ab1dde5b"
+        },
+        {
+          "id": "a88ff6ad-4d55-4f42-a7a0-d2b3c51cee3b",
+          "seq": 2,
+          "at": "2026-11-08T10:46:47.879Z",
+          "project": "狗粮M3",
+          "type": "order.claim",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "claimed",
+            "note": "",
+            "claim_seq": 1
+          },
+          "prev_hash": "4de4983858edc0299f21323ee5609d1fd69353eeafc1e03275c24540ab1dde5b",
+          "hash": "9d23ae4bd3e4b76b47ebbf47bf4f471c5a1eeaedbe1cae64e432d34bf54e4ded"
+        },
+        {
+          "id": "7fc4a82e-9228-487f-bff3-53cbd16c53c3",
+          "seq": 3,
+          "at": "2026-11-08T10:46:47.884Z",
+          "project": "狗粮M3",
+          "type": "order.deliver",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "delivered",
+            "note": "已交"
+          },
+          "prev_hash": "9d23ae4bd3e4b76b47ebbf47bf4f471c5a1eeaedbe1cae64e432d34bf54e4ded",
+          "hash": "ce20d0a899a922a9dc73a12c56a146f3c57bc0ca6ac7aa994e58a7d63143228b"
+        },
+        {
+          "id": "cd769c8c-c998-4c9e-9d91-04313964680f",
+          "seq": 4,
+          "at": "2026-11-08T10:46:47.888Z",
+          "project": "狗粮M3",
+          "type": "order.accept",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "accepted",
+            "note": ""
+          },
+          "prev_hash": "ce20d0a899a922a9dc73a12c56a146f3c57bc0ca6ac7aa994e58a7d63143228b",
+          "hash": "667a7151d177a65d2df4f98a54cfae31c6223e0cb076503650d39b875251ccf3"
+        },
+        {
+          "id": "8c402e1a-c7fa-4497-bab7-24d7e48658af",
+          "seq": 5,
+          "at": "2026-11-08T10:46:47.892Z",
+          "project": "狗粮M3",
+          "type": "order.close",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "ord_a3f882cb8a13561c",
+          "payload": {
+            "status": "closed",
+            "note": ""
+          },
+          "prev_hash": "667a7151d177a65d2df4f98a54cfae31c6223e0cb076503650d39b875251ccf3",
+          "hash": "251c01c1e2a7acd6ac8fd934a35d61e68adc58276ee33aaf2f9a3ac289f76ab2"
+        },
+        {
+          "id": "8d2377ad-722f-4fcb-9efc-308557016891",
+          "seq": 6,
+          "at": "2026-11-08T10:46:47.898Z",
+          "project": "狗粮M3",
+          "type": "qc.open",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "title": "M3 质检台账",
+            "variable_layer": "参数层",
+            "baseline_ref": null,
+            "gates": [
+              "frame",
+              "audio"
+            ]
+          },
+          "prev_hash": "251c01c1e2a7acd6ac8fd934a35d61e68adc58276ee33aaf2f9a3ac289f76ab2",
+          "hash": "56d8c41caa7eb8f0bf77aadcabaa47f0338433d4f935e6b844cec11a13a79798"
+        },
+        {
+          "id": "1a1db70e-42ae-4fb1-960b-bcf51a09fc55",
+          "seq": 7,
+          "at": "2026-11-08T10:46:47.903Z",
+          "project": "狗粮M3",
+          "type": "qc.attach",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "role": "baseline",
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-baseline.mp4",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "allow_same": false,
+            "reason": null,
+            "exemption": false
+          },
+          "prev_hash": "56d8c41caa7eb8f0bf77aadcabaa47f0338433d4f935e6b844cec11a13a79798",
+          "hash": "2a5393044d6af22f752235399225e503acceba2de511a65e4049d768b641f837"
+        },
+        {
+          "id": "877fd179-443c-4aeb-b8d2-37c66be53cf3",
+          "seq": 8,
+          "at": "2026-11-08T10:46:47.907Z",
+          "project": "狗粮M3",
+          "type": "qc.attach",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "role": "candidate",
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-candidate.mp4",
+            "sha256": "ed7297aaaec520b18f99d922187809b4a2cac8fc24e18295660bee9f9a4af150",
+            "bytes": 15,
+            "allow_same": false,
+            "reason": null,
+            "exemption": false
+          },
+          "prev_hash": "2a5393044d6af22f752235399225e503acceba2de511a65e4049d768b641f837",
+          "hash": "dab1757a881e8283b527b4fb756ff9c051659d01db358d95f6eb6061098c2691"
+        },
+        {
+          "id": "0c760fa2-190d-4b00-b7be-972a7e5cdce9",
+          "seq": 9,
+          "at": "2026-11-08T10:46:47.912Z",
+          "project": "狗粮M3",
+          "type": "qc.attach",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "role": "fixed",
+            "path": "V:\\zjunzhang\\trials\\runs\\2026-11-08T10-46-47-793Z\\qc-same-hash.mp4",
+            "sha256": "403a837d491108d13b3b0d34f0db612a969ea9490a47d5c8c3796387a4025b6f",
+            "bytes": 14,
+            "allow_same": true,
+            "reason": "同一源文件复用为修复前后对照",
+            "exemption": true
+          },
+          "prev_hash": "dab1757a881e8283b527b4fb756ff9c051659d01db358d95f6eb6061098c2691",
+          "hash": "a7fa8123a49dee7874f747aff7eb31477f3293aa87e05167a42c5df92cf000a9"
+        },
+        {
+          "id": "be09fed5-b25b-4a71-8f48-3a726f9d7d6a",
+          "seq": 10,
+          "at": "2026-11-08T10:46:47.916Z",
+          "project": "狗粮M3",
+          "type": "qc.machine",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "gate": "frame",
+            "result": "pass",
+            "metrics": {
+              "fps": 24
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false
+          },
+          "prev_hash": "a7fa8123a49dee7874f747aff7eb31477f3293aa87e05167a42c5df92cf000a9",
+          "hash": "7f0a668e2811a99025a66ffba5800327cf58911118244b9c05f6a3cfb19f1835"
+        },
+        {
+          "id": "fa8d3268-172a-4b35-88fa-59288f978986",
+          "seq": 11,
+          "at": "2026-11-08T10:46:47.920Z",
+          "project": "狗粮M3",
+          "type": "qc.machine",
+          "actor": "zjz-值班codex-39824627",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "gate": "audio",
+            "result": "pass",
+            "metrics": {
+              "f0": 149.5
+            },
+            "checker": "zjz-值班codex-39824627",
+            "independent": false
+          },
+          "prev_hash": "7f0a668e2811a99025a66ffba5800327cf58911118244b9c05f6a3cfb19f1835",
+          "hash": "02fb513861773ced9df91ef03b516f57f91b4629a2437474ed3da65ff167eaae"
+        },
+        {
+          "id": "66b51c54-7167-424a-a92f-4adaf935d846",
+          "seq": 12,
+          "at": "2026-11-08T10:46:47.925Z",
+          "project": "狗粮M3",
+          "type": "qc.human",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "verdict": "pass",
+            "note": "东家耳审"
+          },
+          "prev_hash": "02fb513861773ced9df91ef03b516f57f91b4629a2437474ed3da65ff167eaae",
+          "hash": "1608aac568cc72d7a57cd5bd8d29a4e34081bf3719299b08b26bdcb2f6810df4"
+        },
+        {
+          "id": "ac5d5352-30e1-4b08-a66d-545a7a02bcc9",
+          "seq": 13,
+          "at": "2026-11-08T10:46:47.929Z",
+          "project": "狗粮M3",
+          "type": "qc.close",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "qc_bdf91e199768",
+          "payload": {
+            "phenomenon": "表情木",
+            "attribution_layer": "参数层",
+            "fix": "16 步 + 克隆音频",
+            "repro_count": 2,
+            "repro_note": "两次同结果",
+            "conclusion": "baseline"
+          },
+          "prev_hash": "1608aac568cc72d7a57cd5bd8d29a4e34081bf3719299b08b26bdcb2f6810df4",
+          "hash": "f2df304d0bd260e655521908d73ba10a50235821fbf07e5166d1052c8417a22b"
+        },
+        {
+          "id": "abad8081-e3eb-490e-811a-2fbfe7a057d7",
+          "seq": 14,
+          "at": "2026-11-08T10:46:48.062Z",
+          "project": "狗粮M3",
+          "type": "duty.shift",
+          "actor": "zjz-东家-9f756bc0",
+          "subject": "zjz-东家-9f756bc0",
+          "payload": {
+            "from": "zjz-东家-9f756bc0",
+            "to": "zjz-值班codex-39824627",
+            "reason": "heartbeat-timeout",
+            "checkpoint": {
+              "room_dacbbc6d5d0c965f": 0
+            },
+            "applied_rooms": [
+              "room_dacbbc6d5d0c965f"
+            ]
+          },
+          "prev_hash": "f2df304d0bd260e655521908d73ba10a50235821fbf07e5166d1052c8417a22b",
+          "hash": "da93dc78c0d9c08deb8a28f67eb18c4db2a78e61e59da9e3ba6102e20c08bbc3"
+        },
+        {
+          "id": "5f778c3c-503f-46ab-8624-4ce25837dfb5",
+          "seq": 15,
+          "at": "2026-11-08T10:46:48.065Z",
+          "project": "狗粮M3",
+          "type": "duty.watchdog_shift",
+          "actor": "watchdog",
+          "subject": "zjz-东家-9f756bc0",
+          "payload": {
+            "from": "zjz-东家-9f756bc0",
+            "to": "zjz-值班codex-39824627",
+            "reason": "heartbeat-timeout",
+            "epoch": 1,
+            "age_ms": 60001,
+            "duty_event_id": "abad8081-e3eb-490e-811a-2fbfe7a057d7",
+            "duty_event_error": null,
+            "checkpoint_digest": "a12d966c500c381581b264f2e7fb11a9bf0b9e617175122728451fc46a08a2c9"
+          },
+          "prev_hash": "da93dc78c0d9c08deb8a28f67eb18c4db2a78e61e59da9e3ba6102e20c08bbc3",
+          "hash": "9a4c3b2cf9078d347e3a29d38e12d533e1829a066bc885b6296d14ce1a59aefb"
+        }
+      ],
+      "last_seq": 15
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.068Z",
+    "tool": "zjz_event_verify",
+    "args": {
+      "project": "狗粮M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "狗粮M3",
+      "intact": true,
+      "events": 15,
+      "last_seq": 15,
+      "last_hash": "9a4c3b2cf9078d347e3a29d38e12d533e1829a066bc885b6296d14ce1a59aefb"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.069Z",
+    "tool": "zjz_event_verify",
+    "args": {
+      "project": "狗粮M3"
+    },
+    "result": {
+      "ok": true,
+      "project": "狗粮M3",
+      "intact": true,
+      "events": 15,
+      "last_seq": 15,
+      "last_hash": "9a4c3b2cf9078d347e3a29d38e12d533e1829a066bc885b6296d14ce1a59aefb"
+    },
+    "isError": false
+  },
+  {
+    "at": "2026-11-08T10:46:48.069Z",
+    "tool": "zjz_event_projects",
+    "args": {},
+    "result": {
+      "ok": true,
+      "projects": [
+        {
+          "project": "并发M3",
+          "file": "39ea59397e396e3c.jsonl",
+          "last_seq": 15,
+          "last_hash": "55c228b5d7c1a39ffef037d9892c4905ab7e12f86cb08a53b4a2e0a3e885743c",
+          "updated_at": "2026-11-08T10:46:48.038Z"
+        },
+        {
+          "project": "狗粮M3",
+          "file": "6e01d0b456fc6fe0.jsonl",
+          "last_seq": 15,
+          "last_hash": "9a4c3b2cf9078d347e3a29d38e12d533e1829a066bc885b6296d14ce1a59aefb",
+          "updated_at": "2026-11-08T10:46:48.065Z"
+        }
+      ]
+    },
+    "isError": false
+  }
+]

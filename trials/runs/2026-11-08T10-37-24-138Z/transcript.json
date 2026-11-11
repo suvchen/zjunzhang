@@ -1,0 +1,362 @@
+[
+  {
+    "at": "2026-11-08T10:37:24.198Z",
+    "tool": "zjz_identity_new",
+    "args": {
+      "name": "东家"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-东家-2e15ba45",
+      "keypair": {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA+pZTl5qi7ZKThacKET2Vhb0d4gSy2q73Rk8H+pz6wRU=\n-----END PUBLIC KEY-----\n",
+        "privateKey": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIE5lID1JNV75vFcVeol/oGixsnXRAHEi0Wwash/Ipts/\n-----END PRIVATE KEY-----\n"
+      }
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.203Z",
+    "tool": "zjz_identity_new",
+    "args": {
+      "name": "值班Codex"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-值班codex-29a97aea",
+      "keypair": {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAeNHMPn/d+YSeuXd5UV4Rmfkml3yMtO0inWtVnNXruas=\n-----END PUBLIC KEY-----\n",
+        "privateKey": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIACAcsKqEI9p+7fRPsrG95bTNk2ztpC12Zatp+57f0nS\n-----END PRIVATE KEY-----\n"
+      }
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.209Z",
+    "tool": "zjz_new",
+    "args": {
+      "name": "M2-B狗粮房",
+      "slug": "zjz-东家-2e15ba45"
+    },
+    "result": {
+      "ok": true,
+      "room_id": "room_51312e353d210abc",
+      "invite_code": "ZJZ-302D-769B"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.212Z",
+    "tool": "zjz_join",
+    "args": {
+      "invite": "ZJZ-302D-769B",
+      "slug": "zjz-值班codex-29a97aea"
+    },
+    "result": {
+      "ok": true,
+      "room_id": "room_51312e353d210abc",
+      "member": {
+        "slug": "zjz-值班codex-29a97aea",
+        "role": "member",
+        "joined": "2026-11-08T10:37:24.210Z"
+      }
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.214Z",
+    "tool": "zjz_duty_set",
+    "args": {
+      "slug": "zjz-东家-2e15ba45",
+      "mode": "oncall",
+      "watchdog": {
+        "successor": "zjz-值班codex-29a97aea",
+        "max_age_ms": 1000,
+        "check_ms": 1000
+      }
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-东家-2e15ba45",
+      "mode": "oncall",
+      "schedule": [],
+      "checkpoint": null,
+      "watchdog": {
+        "enabled": true,
+        "successor": "zjz-值班codex-29a97aea",
+        "max_age_ms": 1000,
+        "check_ms": 1000
+      },
+      "heartbeat_at": "2026-11-08T10:37:24.213Z"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.215Z",
+    "tool": "zjz_duty_set",
+    "args": {
+      "slug": "zjz-值班codex-29a97aea",
+      "mode": "listen"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-值班codex-29a97aea",
+      "mode": "listen",
+      "schedule": [],
+      "checkpoint": null,
+      "watchdog": null,
+      "heartbeat_at": "2026-11-08T10:37:24.214Z"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.217Z",
+    "tool": "zjz_duty_heartbeat",
+    "args": {
+      "slug": "zjz-东家-2e15ba45"
+    },
+    "result": {
+      "ok": true,
+      "slug": "zjz-东家-2e15ba45",
+      "heartbeat_at": "2026-11-08T10:37:24.216Z",
+      "mode": "oncall"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.222Z",
+    "tool": "zjz_listen_start",
+    "args": {
+      "ttl_ms": 5000,
+      "heartbeat_ms": 500
+    },
+    "result": {
+      "ok": true,
+      "pid": 32016,
+      "epoch": 1,
+      "watching": 1,
+      "pipe": "\\\\.\\pipe\\zjz-listen-0c96e00de388e491"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.223Z",
+    "tool": "zjz_listen_status",
+    "args": {},
+    "result": {
+      "ok": true,
+      "running": true,
+      "lease": {
+        "pid": 32016,
+        "epoch": 1,
+        "started_at": "2026-11-08T10:37:24.218Z",
+        "heartbeat_at": "2026-11-08T10:37:24.218Z",
+        "ttl_ms": 5000,
+        "pipe": "\\\\.\\pipe\\zjz-listen-0c96e00de388e491"
+      },
+      "epoch": 1
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.225Z",
+    "tool": "zjz_send",
+    "args": {
+      "room_id": "room_51312e353d210abc",
+      "text": "工单已派，请接手。",
+      "slug": "zjz-东家-2e15ba45"
+    },
+    "result": {
+      "ok": true,
+      "seq": 1,
+      "id": "msg_1b5a7bd7-6b12-471f-9953-f38aa729aa66"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.228Z",
+    "tool": "zjz_wait",
+    "args": {
+      "slug": "zjz-东家-2e15ba45",
+      "timeout_ms": 3000
+    },
+    "result": {
+      "ok": true,
+      "messages": [
+        {
+          "seq": 1,
+          "id": "msg_1b5a7bd7-6b12-471f-9953-f38aa729aa66",
+          "author": "zjz-东家-2e15ba45",
+          "ts": "2026-11-08T10:37:24.224Z",
+          "text": "工单已派，请接手。",
+          "sig": "RZcww1FrdGP108KPRHWUv3N7Pz7HRtkXpzL7q3PgiEQmxpgplxBN8uEtwbArSeCUYX8CIHK4BdE9DfTXFyCcCQ==",
+          "room_id": "room_51312e353d210abc"
+        }
+      ],
+      "rooms": [
+        "room_51312e353d210abc"
+      ],
+      "daemon": true
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.231Z",
+    "tool": "zjz_wait",
+    "args": {
+      "slug": "zjz-值班codex-29a97aea",
+      "timeout_ms": 3000
+    },
+    "result": {
+      "ok": true,
+      "messages": [
+        {
+          "seq": 1,
+          "id": "msg_1b5a7bd7-6b12-471f-9953-f38aa729aa66",
+          "author": "zjz-东家-2e15ba45",
+          "ts": "2026-11-08T10:37:24.224Z",
+          "text": "工单已派，请接手。",
+          "sig": "RZcww1FrdGP108KPRHWUv3N7Pz7HRtkXpzL7q3PgiEQmxpgplxBN8uEtwbArSeCUYX8CIHK4BdE9DfTXFyCcCQ==",
+          "room_id": "room_51312e353d210abc"
+        }
+      ],
+      "rooms": [
+        "room_51312e353d210abc"
+      ],
+      "daemon": true
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.502Z",
+    "tool": "zjz_send",
+    "args": {
+      "room_id": "room_51312e353d210abc",
+      "text": "跨进程唤醒这一条。",
+      "slug": "zjz-东家-2e15ba45"
+    },
+    "result": {
+      "ok": true,
+      "seq": 2,
+      "id": "msg_0d2b3fd7-ce6f-40ba-85d9-bc9ac5dfc813"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.543Z",
+    "tool": "zjz_wait",
+    "args": {
+      "slug": "zjz-东家-2e15ba45",
+      "timeout_ms": 3000
+    },
+    "result": {
+      "ok": true,
+      "messages": [
+        {
+          "seq": 2,
+          "id": "msg_0d2b3fd7-ce6f-40ba-85d9-bc9ac5dfc813",
+          "author": "zjz-东家-2e15ba45",
+          "ts": "2026-11-08T10:37:24.501Z",
+          "text": "跨进程唤醒这一条。",
+          "sig": "0dIhJOGLh7KXdQHokkVcTB4eIiPJpPR8TcW5Zf8T1aS9rxFS2oxZU6Stg2N/E2CKW3m0cfRxEccTz2Ocw6ZrDg==",
+          "room_id": "room_51312e353d210abc"
+        }
+      ],
+      "rooms": [
+        "room_51312e353d210abc"
+      ],
+      "daemon": true
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.552Z",
+    "tool": "zjz_watchdog_tick",
+    "args": {
+      "now": 1794134304543
+    },
+    "result": {
+      "ok": true,
+      "checked": 1,
+      "shifted": [
+        {
+          "from": "zjz-东家-2e15ba45",
+          "to": "zjz-值班codex-29a97aea",
+          "checkpoint": {
+            "rooms": {
+              "room_51312e353d210abc": 2
+            },
+            "ts": "2026-11-08T10:37:24.546Z",
+            "from": "zjz-东家-2e15ba45"
+          },
+          "age_ms": 60327
+        }
+      ],
+      "alerts": []
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.858Z",
+    "tool": "zjz_wait",
+    "args": {
+      "slug": "zjz-值班codex-29a97aea",
+      "timeout_ms": 300
+    },
+    "result": {
+      "ok": true,
+      "messages": [],
+      "rooms": [],
+      "timeout": true,
+      "daemon": true
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.859Z",
+    "tool": "zjz_watchdog_tick",
+    "args": {
+      "now": 1794134305543
+    },
+    "result": {
+      "ok": true,
+      "checked": 0,
+      "shifted": [],
+      "alerts": []
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.861Z",
+    "tool": "zjz_send",
+    "args": {
+      "room_id": "room_51312e353d210abc",
+      "text": "换班后新消息。",
+      "slug": "zjz-东家-2e15ba45"
+    },
+    "result": {
+      "ok": true,
+      "seq": 3,
+      "id": "msg_ab3bd567-664d-48c0-9c9d-350205d47865"
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.863Z",
+    "tool": "zjz_wait",
+    "args": {
+      "slug": "zjz-值班codex-29a97aea",
+      "timeout_ms": 3000
+    },
+    "result": {
+      "ok": true,
+      "messages": [
+        {
+          "seq": 3,
+          "id": "msg_ab3bd567-664d-48c0-9c9d-350205d47865",
+          "author": "zjz-东家-2e15ba45",
+          "ts": "2026-11-08T10:37:24.860Z",
+          "text": "换班后新消息。",
+          "sig": "oDhjE9xDDKOEDVje/oA7rSq4IPng9PmRn3+e8fofG+uk5Ph356WTK6UuUggQLIbDLpq6wHLeECiDdzPooszNDQ==",
+          "room_id": "room_51312e353d210abc"
+        }
+      ],
+      "rooms": [
+        "room_51312e353d210abc"
+      ],
+      "daemon": true
+    }
+  },
+  {
+    "at": "2026-11-08T10:37:24.865Z",
+    "tool": "zjz_listen_stop",
+    "args": {},
+    "result": {
+      "ok": true,
+      "stopped": true,
+      "released": true
+    }
+  }
+]
