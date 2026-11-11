@@ -41,7 +41,7 @@
   .titlebar { display:flex; align-items:center; gap:11px; padding:10px 16px;
     background:linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,0) 72%), var(--panel);
     border-bottom:1px solid var(--line2); -webkit-app-region:drag; flex-shrink:0; }
-  .titlebar img { width:28px; height:28px; border-radius:8px; }
+  .titlebar img { width:28px; height:28px; border-radius:0; background:#fff; opacity:1; filter:none; box-shadow:none; }
   .titlebar .tt { font-size:15px; font-weight:700; letter-spacing:.5px;
     background:linear-gradient(180deg,#f0d79b,#d9b46a 60%,#b98f42); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .titlebar .ts { font-size:10px; color:var(--dim2); letter-spacing:3px; margin-top:-2px; }
@@ -68,6 +68,12 @@
   aside .room .un { margin-left:auto; color:#1a1206; background:var(--gold); font-size:10px; font-weight:700;
     padding:1px 7px; border-radius:9px; }
   aside .room.arch .rn { color:var(--dim2); text-decoration:line-through; }
+  aside .side-foot { margin-top:auto; padding:11px 12px 12px; border-top:1px solid var(--line2); background:linear-gradient(180deg, rgba(217,180,106,.05), transparent); display:grid; gap:8px; }
+  aside .side-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+  aside .side-btn { cursor:pointer; border:1px solid var(--line2); border-radius:9px; padding:8px 7px; color:var(--fg); background:var(--panel2); font-size:11px; font-weight:600; }
+  aside .side-btn:hover { border-color:var(--gold3); background:rgba(217,180,106,.12); }
+  aside .side-meta { display:flex; justify-content:space-between; gap:8px; color:var(--dim2); font-size:10.5px; padding:0 2px; }
+  aside .side-meta #sideIdentity { color:var(--gold); font-weight:600; }
 
   /* 右侧：消息区 */
   section { flex:1; display:flex; flex-direction:column; min-width:0; }
@@ -131,6 +137,10 @@
     padding:8px 11px; font:inherit; font-size:12.5px; outline:none; }
   .arow input:focus, .arow select:focus { border-color:var(--gold3); }
   .arow input::placeholder { color:var(--dim2); }
+  .ahint { font-size:10.5px; color:var(--dim2); margin:-2px 0 8px 78px; }
+  #agAdvanced { border-top:1px solid var(--line2); margin-top:8px; padding-top:8px; }
+  #agAdvanced summary { cursor:pointer; color:var(--dim2); font-size:11px; }
+  #agAdvanced[open] summary { color:var(--gold); margin-bottom:8px; }
   .abtn { background:linear-gradient(180deg,#e6c582,#c9a24f); color:#25190a; font-weight:700; border:1px solid var(--gold2);
     border-radius:9px; padding:9px 20px; cursor:pointer; box-shadow:0 2px 10px rgba(217,180,106,.26); }
   .abtn:hover { filter:brightness(1.05); }
@@ -154,7 +164,7 @@
 
   /* 空状态 */
   .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:40px; text-align:center; }
-  .empty img { width:110px; height:110px; opacity:1; filter:none; }
+  .empty img { width:110px; height:110px; background:#fff; opacity:1; filter:none; box-shadow:none; }
   .empty .et { font-size:18px; font-weight:700; letter-spacing:4px;
     background:linear-gradient(180deg,#f0d79b,#c9a24f); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .empty .es { font-size:12.5px; color:var(--dim2); line-height:1.9; letter-spacing:1px; }
@@ -179,11 +189,22 @@
     <aside>
       <div class="ahead">项目 / 房间<span class="add" id="newRoom" title="开新项目房">＋</span></div>
       <div class="rlist" id="roomList"><div class="loading">载入中…</div></div>
+      <div class="side-foot">
+        <div class="side-actions">
+          <button class="side-btn" id="sideNewRoom" title="新建项目房">＋ 新建项目房</button>
+          <button class="side-btn" id="sideAgents" title="打开智能体管理">请智能体</button>
+        </div>
+        <div class="side-meta">
+          <span id="sideIdentity">未选身份</span>
+          <span id="sideRoomCount">0 个项目房</span>
+        </div>
+      </div>
     </aside>
     <section>
       <div class="viewtabs">
         <div class="vt on" id="tabChat">房 讯</div>
         <div class="vt" id="tabAgents">智 能 体</div>
+        <div class="vt" id="tabMember">会 员 / 升 级</div>
       </div>
       <div class="rhead" id="roomHead" style="display:none">
         <div>
@@ -216,27 +237,31 @@
         <!-- 请智能体 -->
         <div class="acard">
           <div class="at">请一个智能体进帐</div>
-          <div class="as">本机检测到的智能体可一键选用，或自定义。</div>
+          <div class="as">点上方检测到的智能体可自动填好；一般只改名字和房间。</div>
           <div class="detect" id="agDetect"><span style="color:var(--dim2)">正在检测本机智能体…</span></div>
           <div class="arow">
-            <label>显示名</label>
-            <input id="agDispName" placeholder="给它起个名字（如：MiMo分身）" style="min-width:180px">
-            <label>进哪个房</label>
+            <label>名字</label>
+            <input id="agDispName" placeholder="如：MiMo分身" style="min-width:180px">
+            <label>进入房间</label>
             <select id="agRoom"></select>
           </div>
           <div class="arow">
-            <label>可执行</label>
+            <label>程序</label>
             <input id="agExe" placeholder="如 codex / claude / opencode-cli" style="min-width:200px">
             <label>参数</label>
-            <input id="agArgs" placeholder="必须含 {task}" style="min-width:180px">
-          </div>
-          <div class="arow">
-            <label>唤醒</label>
-            <select id="agWake"><option value="all">全部消息</option><option value="mention">只在被@</option></select>
-            <label>超时(ms)</label>
-            <input id="agTimeout" type="number" value="600000" style="width:110px">
+            <input id="agArgs" value="run {task}" placeholder="run {task}" style="min-width:180px">
             <button class="abtn" id="agInvite">加入中军帐</button>
           </div>
+          <div class="ahint">参数一般不用改；<code>{task}</code> 是房讯进入智能体的入口。</div>
+          <details id="agAdvanced">
+            <summary>高级设置</summary>
+            <div class="arow">
+              <label>唤醒</label>
+              <select id="agWake"><option value="all">全部消息</option><option value="mention">只在被@</option></select>
+              <label>超时</label>
+              <input id="agTimeout" type="number" value="600000" style="width:110px">
+            </div>
+          </details>
           <div class="amsg" id="agInviteMsg"></div>
         </div>
         <!-- 帐内智能体 -->
@@ -244,6 +269,29 @@
           <div class="at">帐内智能体</div>
           <div class="as">按房间逐个移出（移出只退该房，身份保留可再请回）。</div>
           <div id="agList"><div style="color:var(--dim2)">载入中…</div></div>
+        </div>
+        <!-- 会员/升级面板：免费版自带"升级位置"，以后收费版（参谋长等）从这里推下去、按会员解锁 -->
+        <div class="agents" id="memberPanel">
+          <div class="acard">
+            <div class="at">版本与升级</div>
+            <div class="as">检查新版本。升级会带来更强的能力（含付费功能）。</div>
+            <div class="arow">
+              <label>当前版本</label><span id="appVer" style="color:var(--gold)">…</span>
+              <button class="abtn" id="btnCheckUpdate">检查更新</button>
+            </div>
+            <div class="amsg" id="updateMsg"></div>
+            <div id="updateBox"></div>
+          </div>
+          <div class="acard">
+            <div class="at">会员 · 解锁更强能力</div>
+            <div class="as" id="memberTier">…</div>
+            <div id="memberFeats"></div>
+            <div class="arow" style="margin-top:10px">
+              <button class="abtn" id="btnUpgrade">升级会员</button>
+              <span style="font-size:11px;color:var(--dim2)">免费版已含：项目房/消息/智能体/唤醒回执报警/桌面客户端</span>
+            </div>
+            <div class="amsg" id="memberMsg"></div>
+          </div>
         </div>
       </div>
       <div class="composer">

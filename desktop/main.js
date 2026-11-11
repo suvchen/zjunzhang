@@ -149,6 +149,48 @@ ipcMain.handle('api:get', (_e, pathname) => apiGet(pathname));
 ipcMain.handle('api:post', (_e, pathname, data) => apiPost(pathname, data));
 ipcMain.handle('api:base', () => API_BASE);
 
+// —— 升位/升级通道（收费入口）：查 GitHub Releases 有无新版 ——
+// 免费版自带"升级位置"——以后收费版（参谋长等）通过这里推下去、按会员解锁。
+const APP_VERSION = require('./package.json').version;
+const REPO_API = 'https://api.github.com/repos/suvchen/zjunzhang';
+// 走盘古代理（国内直连 github 不稳，见 H3 知识库）
+async function ghFetch(url) {
+  let agent;
+  try { const { ProxyAgent } = await import('undici'); agent = new ProxyAgent('http://127.0.0.1:51081'); } catch { agent = undefined; }
+  return fetch(url, { headers: { 'User-Agent': 'zjz', Accept: 'application/vnd.github+json' }, dispatcher: agent });
+}
+ipcMain.handle('update:check', async () => {
+  try {
+    const r = await ghFetch(`${REPO_API}/releases/latest`);
+    const rel = await r.json();
+    const latest = String(rel.tag_name || rel.name || '').replace(/^v/, '');
+    const upToDate = !latest || latest === APP_VERSION;
+    return {
+      ok: true,
+      current: APP_VERSION,
+      latest: latest || APP_VERSION,
+      upToDate,
+      url: rel.html_url || null,
+      notes: rel.body || '',
+      assets: (rel.assets || []).map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url })),
+    };
+  } catch (e) {
+    return { ok: false, code: 'CHECK_FAILED', message: String(e.message), current: APP_VERSION };
+  }
+});
+ipcMain.handle('app:version', () => APP_VERSION);
+// —— 会员/付费闸口：会员状态（收费功能解锁位）——
+// 现在是免费版，会员位已预留。收费版（参谋长）从这里按订阅/授权解锁。
+ipcMain.handle('member:status', () => ({
+  tier: 'free', // free | pro
+  entitled: false,
+  features: {
+    rooms: true, messaging: true, agents: true, wake: true, desktop: true, // 免费版功能
+    chief: false, council: false, pipeline: false, memory: false, // 会员版功能（未解锁）
+  },
+  upgrade_url: `${REPO_API.replace('api.github.com/repos', 'github.com')}/releases/latest`,
+}));
+
 // 单实例：双击两次不该变两个窗口（单窗口多房间是产品口径），第二次只把已有窗口顶到前台
 const gotSingleLock = app.requestSingleInstanceLock();
 if (!gotSingleLock) {

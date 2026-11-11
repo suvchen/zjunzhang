@@ -37,6 +37,10 @@ function dayKey(iso) {
 }
 function avatarChar(name) { return String(name || '?').trim().slice(0, 1).toUpperCase(); }
 
+function updateSidebarSummary() {
+  if ($('sideRoomCount')) $('sideRoomCount').textContent = `${roomsCache.length} 个项目房`;
+  if ($('sideIdentity')) $('sideIdentity').textContent = slug ? shortName(slug) : '未选身份';
+}
 // —— 载入房间栏 ——
 async function loadRooms() {
   const j = await window.zjz.get(`/api/rooms?slug=${encodeURIComponent(slug)}`);
@@ -51,6 +55,7 @@ async function loadRooms() {
     }
   }
   roomsCache = j.rooms || [];
+  updateSidebarSummary();
   if (roomsCache.length === 0) {
     list.innerHTML = '<div class="loading" style="padding:28px 18px">还没有项目房间<br><br>点右上角「＋」开一个</div>';
     return;
@@ -58,10 +63,26 @@ async function loadRooms() {
   list.innerHTML = roomsCache.map((r) => `
     <div class="room${r.archived ? ' arch' : ''}${r.room_id === currentRoom ? ' sel' : ''}" data-room="${esc(r.room_id)}">
       <div class="rn">${esc(r.name || r.room_id)}${r.unread ? `<span class="un">${r.unread}</span>` : ''}</div>
-      <div class="rm"><span>${esc(shortName(r.owner))}</span><span>${r.archived ? '已归档' : '进行中'}</span></div>
+      <div class="rm"><span>${esc(shortName(r.owner))}</span><span>${r.archived ? '已归档' : '进行中'}</span>
+        <span class="delroom" data-del="${esc(r.room_id)}" title="删除房间" style="margin-left:auto;cursor:pointer;color:#e2695f">删除</span></div>
     </div>`).join('');
   list.querySelectorAll('.room').forEach((el) => {
     el.onclick = () => openRoom(el.dataset.room);
+  });
+  // 删房（能建也能删，仅房主）
+  list.querySelectorAll('.delroom').forEach((el) => {
+    el.onclick = async (e) => {
+      e.stopPropagation();
+      const roomId = el.dataset.del;
+      if (!confirm('确定删除这个房间？不可恢复。')) return;
+      const res = await window.zjz.post('/api/rooms/delete', { by: slug, room_id: roomId });
+      if (res && res.ok) {
+        if (currentRoom === roomId) { currentRoom = null; $('stream').innerHTML = ''; }
+        loadRooms();
+      } else {
+        alert('删除失败：' + (res && res.code ? res.code + ' ' : '') + (res && res.message ? res.message : ''));
+      }
+    };
   });
   // 首屏自动进第一个活房
   if (!currentRoom) {
@@ -197,34 +218,76 @@ function startPoll() {
   }, 3000);
 }
 
-// —— 视图切换：房讯 / 智能体 ——
+// —— 视图切换：房讯 / 智能体 / 会员升级 ——
 function switchView(v) {
   $('tabChat').classList.toggle('on', v === 'chat');
   $('tabAgents').classList.toggle('on', v === 'agents');
+  $('tabMember').classList.toggle('on', v === 'member');
   $('agentsPanel').classList.toggle('show', v === 'agents');
+  $('memberPanel').classList.toggle('show', v === 'member');
   $('stream').style.display = v === 'chat' ? 'block' : 'none';
   $('roomHead').style.display = (v === 'chat' && currentRoom) ? 'flex' : 'none';
   document.querySelector('.composer').style.display = v === 'chat' ? 'flex' : 'none';
   if (v === 'agents') { loadAgentRooms(); loadAgents(); detectAgents(); }
+  if (v === 'member') { loadMember(); }
+}
+
+// —— 会员/升级：版本 + 会员状态 + 检查更新（升级/收费入口）——
+async function loadMember() {
+  try {
+    const ver = await window.zjz.getVersion();
+    if ($('appVer')) $('appVer').textContent = 'v' + ver;
+    const m = await window.zjz.memberStatus();
+    if ($('memberTier')) $('memberTier').textContent =
+      (m.tier === 'pro' ? '会员版（已解锁付费功能）' : '免费版（付费功能待解锁）');
+    if ($('memberFeats')) {
+      const feats = [
+        ['项目房间', m.features.rooms], ['消息收发', m.features.messaging], ['智能体管理', m.features.agents],
+        ['唤醒/回执/报警', m.features.wake], ['独立桌面客户端', m.features.desktop],
+        ['参谋长（拆解/派活/督战/汇总）', m.features.chief],
+        ['多智能体会商', m.features.council], ['技能流水线', m.features.pipeline], ['记忆智库', m.features.memory],
+      ];
+      $('memberFeats').innerHTML = feats.map(([n, on]) =>
+        `<div class="agent-item"><span class="an">${n}</span><span class="aw ${on ? 'on' : 'off'}">${on ? '已含' : '会员'}</span></div>`).join('');
+    }
+  } catch (e) { /* 界面容错 */ }
 }
 
 // —— 智能体：本机探测 ——
+function defaultAgentArgs(exe, name) {
+  const key = `${String(exe || '')} ${String(name || '')}`.toLowerCase();
+  if (key.includes('opencode')) return 'run {task}';
+  if (key.includes('codex')) return 'exec {task}';
+  if (key.includes('claude')) return '-p {task}';
+  return '{task}';
+}
+
 async function detectAgents() {
   const j = await window.zjz.get('/api/agents/discover');
   const box = $('agDetect');
   const list = (j && j.agents) || [];
   if (list.length === 0) { box.innerHTML = '<span style="color:var(--warn)">本机没检测到已知智能体 CLI，可手动填</span>'; return; }
   box.innerHTML = '<span style="color:var(--dim2)">本机检测到：</span>' + list.map((a) =>
-    `<span class="chip" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">＋ ${esc(a.name)}</span>`).join('');
-  box.querySelectorAll('.chip').forEach((c) => {
+    `<span class="chip fill-one" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">＋ ${esc(a.name)}</span><button type="button" class="chip add-one" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">一键加入</button>`).join('');
+  box.querySelectorAll('.chip.fill-one').forEach((c) => {
     c.onclick = () => {
       $('agExe').value = c.dataset.exe;
       if (!$('agDispName').value) $('agDispName').value = c.dataset.name + '分身';
-      if (!$('agArgs').value) $('agArgs').value = 'run {task}';
+      $('agArgs').value = defaultAgentArgs(c.dataset.exe, c.dataset.name);
+    };
+  });
+  box.querySelectorAll('.chip.add-one').forEach((c) => {
+    c.onclick = () => {
+      const room_id = $('agRoom').value;
+      const msg = $('agInviteMsg');
+      if (!room_id) { msg.className = 'amsg bad'; msg.textContent = '先在“进入房间”里选一个项目房'; return; }
+      $('agExe').value = c.dataset.exe;
+      $('agDispName').value = c.dataset.name + '分身';
+      $('agArgs').value = defaultAgentArgs(c.dataset.exe, c.dataset.name);
+      $('agInvite').click();
     };
   });
 }
-
 // —— 智能体：进房下拉（带房主） ——
 async function loadAgentRooms() {
   const j = await window.zjz.get(`/api/rooms?slug=${encodeURIComponent(slug)}`);
@@ -283,6 +346,32 @@ function applyTheme(name) {
   // 页签切换
   $('tabChat').onclick = () => switchView('chat');
   $('tabAgents').onclick = () => switchView('agents');
+  $('tabMember').onclick = () => switchView('member');
+  // 升级/收费入口
+  if ($('btnCheckUpdate')) $('btnCheckUpdate').onclick = async () => {
+    const msg = $('updateMsg'); msg.className = 'amsg'; msg.textContent = '检查中…';
+    const u = await window.zjz.checkUpdate();
+    if (u && u.ok) {
+      if (u.upToDate) { msg.className = 'amsg ok'; msg.textContent = `已是最新版 v${u.current}`; }
+      else {
+        msg.className = 'amsg ok';
+        msg.textContent = `发现新版本 v${u.latest}（当前 v${u.current}）`;
+        $('updateBox').innerHTML = `<div class="card" style="margin:8px 0 0"><b>升级到 v${esc(u.latest)}</b>
+          <div style="font-size:11px;color:var(--dim2);margin:4px 0">下载安装包，覆盖安装即可（数据保留）。</div>
+          ${(u.assets || []).map((a) => `<a class="abtn ghost" style="text-decoration:none;display:inline-block;margin:3px 6px 0 0" href="${esc(a.url)}" target="_blank">下载 ${esc(a.name)}</a>`).join('')}
+          <a class="abtn ghost" style="text-decoration:none;display:inline-block;margin:3px 0 0" href="${esc(u.url)}" target="_blank">查看发布页</a></div>`;
+      }
+    } else { msg.className = 'amsg bad'; msg.textContent = '检查更新失败：' + (u && u.message || ''); }
+  };
+  if ($('btnUpgrade')) $('btnUpgrade').onclick = async () => {
+    const m = await window.zjz.memberStatus();
+    if ($('memberMsg')) {
+      $('memberMsg').className = 'amsg';
+      $('memberMsg').innerHTML = m.tier === 'pro'
+        ? '已是会员版，付费功能已解锁。'
+        : `会员版开发中，即将上线。到时从<a href="${esc(m.upgrade_url)}" target="_blank" style="color:var(--gold)">发布页</a>升级解锁付费功能（参谋长等）。`;
+    }
+  };
   // 开新项目房
   $('agCreate').onclick = async () => {
     const msg = $('agCreateMsg'); msg.className = 'amsg'; msg.textContent = '';
@@ -331,7 +420,7 @@ function applyTheme(name) {
   };
   $('sendBtn').onclick = sendMsg;
   $('msgInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
-  $('newRoom').onclick = async () => {
+  const createRoomFromPrompt = async () => {
     const name = prompt('新项目房间叫什么名字？');
     if (!name) return;
     const by = slug || prompt('用哪个身份建房（房主）？');
@@ -345,7 +434,11 @@ function applyTheme(name) {
       alert(`建房失败：${r && r.code} ${r && r.message}`);
     }
   };
-  // 当前身份必须属于本 home；换 home/清数据后，旧 localStorage 不得挡住首启建房
+
+
+  $('newRoom').onclick = createRoomFromPrompt;
+  $('sideNewRoom').onclick = createRoomFromPrompt;
+  $('sideAgents').onclick = () => switchView('agents');  // 当前身份必须属于本 home；换 home/清数据后，旧 localStorage 不得挡住首启建房
   const memberState = await window.zjz.get('/api/members');
   const available = (memberState && memberState.slugs) || [];
   if (!slug || !available.includes(slug)) {
