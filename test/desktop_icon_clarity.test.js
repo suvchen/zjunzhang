@@ -25,10 +25,10 @@ test('E44-C desktop shortcut uses the white-background raster icon', () => {
   assert.doesNotMatch(shortcutScript, /public\\favicon\.ico/);
 });
 
-test('E44-D raster icon is opaque RGB and favicon is populated', () => {
+test('E44-D raster icon is transparent RGBA (blends with UI) and favicon is populated', () => {
   const png = fs.readFileSync(path.join(ROOT, 'public', 'icon-256.png'));
   assert.equal(png[24], 8, 'PNG bit depth must be 8');
-  assert.equal(png[25], 2, 'PNG must be opaque RGB, not RGBA');
+  assert.equal(png[25], 6, 'PNG must be RGBA transparent so the logo blends with the UI background');
   const ico = fs.readFileSync(path.join(ROOT, 'public', 'favicon.ico'));
   assert.ok(ico.length > 1000, 'favicon must contain real image data');
 });
