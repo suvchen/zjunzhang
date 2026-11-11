@@ -618,6 +618,16 @@ function makeHandler(home, broker) {
         json(response, 200, { ok: true, plan_id: ran.plan_id, goal, dispatched: ran.dispatched, report, review, posted });
         return;
       }
+      // 删房：能建就能删。仅房主可删（不可恢复，删前确认）。
+      if (request.method === 'POST' && url.pathname === '/api/rooms/delete') {
+        const body = await readBody(request);
+        const by = String((body && body.by) || '').trim();
+        const room_id = String((body && body.room_id) || '').trim();
+        if (!by || !room_id) { json(response, 400, { ok: false, code: 'BAD_INPUT', message: '缺 by（操作者）或 room_id' }); return; }
+        const result = room.remove(home, by, room_id);
+        json(response, result.ok ? 200 : statusFor(result.code), result);
+        return;
+      }
       if (request.method === 'GET' && url.pathname === '/api/duty/board') {
         const delivery = deliveryApi.board(home, {});
         const registered = memberApi.list(home);

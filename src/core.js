@@ -400,6 +400,26 @@ function archiveRoom(home, slug, roomId) {
   });
 }
 
+// 删房：能建就能删。仅房主可删，删房间目录并从索引移除（不可恢复，删前请确认）。
+function removeRoom(home, slug, roomId) {
+  return normalize(() => {
+    const h = homeDir(home);
+    const identityRecord = loadIdentityOrFail(h, slug);
+    const dir = roomDir(h, roomId);
+    const meta = readMeta(h, roomId);
+    if (meta.owner !== identityRecord.slug) fail('NOT_OWNER', '仅房主可删除');
+    // 从索引移除
+    withLock(indexLock(h), () => {
+      const index = readIndex(h);
+      delete index.rooms[roomId];
+      writeIndex(h, index);
+    });
+    // 删房间目录（不可恢复）
+    fs.rmSync(dir, { recursive: true, force: true });
+    return ok({ room_id: roomId, deleted: true });
+  });
+}
+
 function membersOfRoom(home, slug, roomId) {
   return normalize(() => {
     const h = homeDir(home);
@@ -461,6 +481,7 @@ export const room = {
   create: createRoom,
   join: joinRoom,
   archive: archiveRoom,
+  remove: removeRoom,
   members: membersOfRoom,
   list: listRooms,
 };

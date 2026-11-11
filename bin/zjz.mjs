@@ -352,10 +352,21 @@ async function main() {
     return;
   }
 
+  // 删房：能建就能删（仅房主，不可恢复）
+  if (command === 'delete' || command === 'rm') {
+    const slug = requireSlug();
+    const roomId = resolveRoom(slug, subcommand || positional[1] || flags.room);
+    if (!roomId) {
+      emit({ ok: false, code: 'BAD_INPUT', message: '删哪个房？用法：zjz delete <room_id>（或 --room）' });
+      return;
+    }
+    emit(room.remove(home, slug, roomId));
+    return;
+  }
+
   if (command === 'read') {
     const slug = requireSlug();
-    const roomId = resolveRoom(slug, flags.room);
-    if (!roomId) {
+    const roomId = resolveRoom(slug, flags.room);    if (!roomId) {
       emit({ ok: false, code: 'BAD_INPUT', message: '无法确定房间：请传 --room' });
       return;
     }
