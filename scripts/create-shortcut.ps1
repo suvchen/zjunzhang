@@ -19,7 +19,7 @@ $sc = $shell.CreateShortcut($lnk)
 $sc.TargetPath = $powershell
 $sc.Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Minimized -File `"$launcher`" -Port $Port -Home `"$root`""
 $sc.WorkingDirectory = $root
-$icon = Join-Path (Split-Path -Parent $PSScriptRoot) "public\icon-256.png"
+$icon = Join-Path (Split-Path -Parent $PSScriptRoot) "public\favicon.ico"
 if (Test-Path $icon) { $sc.IconLocation = $icon } else { $sc.IconLocation = "$powershell,0" }
 $sc.Description = "中军帐（自动确保后端在线并打开单窗口）"
 $sc.Save()

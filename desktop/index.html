@@ -41,7 +41,7 @@
   .titlebar { display:flex; align-items:center; gap:11px; padding:10px 16px;
     background:linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,0) 72%), var(--panel);
     border-bottom:1px solid var(--line2); -webkit-app-region:drag; flex-shrink:0; }
-  .titlebar img { width:28px; height:28px; border-radius:0; background:#fff; opacity:1; filter:none; box-shadow:none; }
+  .titlebar img { width:28px; height:28px; border-radius:8px; }
   .titlebar .tt { font-size:15px; font-weight:700; letter-spacing:.5px;
     background:linear-gradient(180deg,#f0d79b,#d9b46a 60%,#b98f42); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .titlebar .ts { font-size:10px; color:var(--dim2); letter-spacing:3px; margin-top:-2px; }
@@ -131,10 +131,6 @@
     padding:8px 11px; font:inherit; font-size:12.5px; outline:none; }
   .arow input:focus, .arow select:focus { border-color:var(--gold3); }
   .arow input::placeholder { color:var(--dim2); }
-  .ahint { font-size:10.5px; color:var(--dim2); margin:-2px 0 8px 78px; }
-  #agAdvanced { border-top:1px solid var(--line2); margin-top:8px; padding-top:8px; }
-  #agAdvanced summary { cursor:pointer; color:var(--dim2); font-size:11px; }
-  #agAdvanced[open] summary { color:var(--gold); margin-bottom:8px; }
   .abtn { background:linear-gradient(180deg,#e6c582,#c9a24f); color:#25190a; font-weight:700; border:1px solid var(--gold2);
     border-radius:9px; padding:9px 20px; cursor:pointer; box-shadow:0 2px 10px rgba(217,180,106,.26); }
   .abtn:hover { filter:brightness(1.05); }
@@ -158,7 +154,7 @@
 
   /* 空状态 */
   .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:40px; text-align:center; }
-  .empty img { width:110px; height:110px; background:#fff; opacity:1; filter:none; box-shadow:none; }
+  .empty img { width:110px; height:110px; opacity:1; filter:none; }
   .empty .et { font-size:18px; font-weight:700; letter-spacing:4px;
     background:linear-gradient(180deg,#f0d79b,#c9a24f); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .empty .es { font-size:12.5px; color:var(--dim2); line-height:1.9; letter-spacing:1px; }
@@ -220,31 +216,27 @@
         <!-- 请智能体 -->
         <div class="acard">
           <div class="at">请一个智能体进帐</div>
-          <div class="as">点上方检测到的智能体可自动填好；一般只改名字和房间。</div>
+          <div class="as">本机检测到的智能体可一键选用，或自定义。</div>
           <div class="detect" id="agDetect"><span style="color:var(--dim2)">正在检测本机智能体…</span></div>
           <div class="arow">
-            <label>名字</label>
-            <input id="agDispName" placeholder="如：MiMo分身" style="min-width:180px">
-            <label>进入房间</label>
+            <label>显示名</label>
+            <input id="agDispName" placeholder="给它起个名字（如：MiMo分身）" style="min-width:180px">
+            <label>进哪个房</label>
             <select id="agRoom"></select>
           </div>
           <div class="arow">
-            <label>程序</label>
+            <label>可执行</label>
             <input id="agExe" placeholder="如 codex / claude / opencode-cli" style="min-width:200px">
             <label>参数</label>
-            <input id="agArgs" value="run {task}" placeholder="run {task}" style="min-width:180px">
+            <input id="agArgs" placeholder="必须含 {task}" style="min-width:180px">
+          </div>
+          <div class="arow">
+            <label>唤醒</label>
+            <select id="agWake"><option value="all">全部消息</option><option value="mention">只在被@</option></select>
+            <label>超时(ms)</label>
+            <input id="agTimeout" type="number" value="600000" style="width:110px">
             <button class="abtn" id="agInvite">加入中军帐</button>
           </div>
-          <div class="ahint">参数一般不用改；<code>{task}</code> 是房讯进入智能体的入口。</div>
-          <details id="agAdvanced">
-            <summary>高级设置</summary>
-            <div class="arow">
-              <label>唤醒</label>
-              <select id="agWake"><option value="all">全部消息</option><option value="mention">只在被@</option></select>
-              <label>超时</label>
-              <input id="agTimeout" type="number" value="600000" style="width:110px">
-            </div>
-          </details>
           <div class="amsg" id="agInviteMsg"></div>
         </div>
         <!-- 帐内智能体 -->
