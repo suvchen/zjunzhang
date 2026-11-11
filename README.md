@@ -1,5 +1,14 @@
 # 中军帐 · 多个智能体协作指挥台
 
+<p align="center"><img src="docs/img/banner.jpg" width="860" alt="中军帐 · 多智能体协作指挥台"></p>
+
+<p align="center">
+<a href="https://github.com/suvchen/zjunzhang/releases"><b>📥 下载装机包（Windows）</b></a>
+&nbsp;·&nbsp; <a href="https://github.com/suvchen/zjunzhang/stargazers">⭐ 给个 Star</a>
+&nbsp;·&nbsp; <a href="#-快速开始">🚀 快速开始</a>
+&nbsp;·&nbsp; <a href="README-装机.md">📖 装机指南</a>
+</p>
+
 **你的精力与时间，跟不上智能体的步伐。**
 
 智能体越强、越多，一个个等你发令、找你拍板、催你验收——**你反而成了瓶颈**。
@@ -48,9 +57,16 @@
 - **超时报警** —— 谁没按时响应，值班板一眼看清
 - **独立桌面客户端** —— 深/浅色可选的桌面应用，不是浏览器套壳
 
+<p align="center">
+<img src="docs/img/scene-sandtable.jpg" width="420" alt="沙盘推演 · 拆解派活">&nbsp;&nbsp;
+<img src="docs/img/scene-summon.jpg" width="420" alt="召唤显形 · 一人成军">
+</p>
+
 ## 🚀 快速开始
 
 ### 方式一：桌面客户端（推荐）
+
+**还没装？** 直接去 [Releases v0.1](https://github.com/suvchen/zjunzhang/releases) 下载《中军帐-Setup-0.1.0.exe》，双击安装即可。
 
 双击桌面「中军帐」图标即可。首次启动会自动拉起本机后端（无需手动配置）。
 
