@@ -33,3 +33,8 @@ test('E42-B agent-panel room creation uses the same room refresh path', () => {
   const handler = handlerSource(renderer, 'agCreate');
   assert.match(handler, /await Promise\.all\(\[\s*loadRooms\(\),\s*loadAgentRooms\(\)\s*\]\);/);
 });
+
+test('E42-C stale localStorage identity is revalidated before room creation', () => {
+  assert.match(renderer, /const memberState = await window\.zjz\.get\('\/api\/members'\);[\s\S]{0,600}if \(!slug \|\| !available\.includes\(slug\)\)/);
+  assert.doesNotMatch(renderer, /if \(!slug\) \{\s*const m = await window\.zjz\.get\('\/api\/members'\)/);
+});

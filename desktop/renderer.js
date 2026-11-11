@@ -345,11 +345,14 @@ function applyTheme(name) {
       alert(`建房失败：${r && r.code} ${r && r.message}`);
     }
   };
-  // 首次若无身份，取一个
-  if (!slug) {
-    const m = await window.zjz.get('/api/members');
-    if (m && m.slugs && m.slugs.length) { slug = m.slugs[0]; localStorage.setItem('zjz.slug', slug); }
-    else {
+  // 当前身份必须属于本 home；换 home/清数据后，旧 localStorage 不得挡住首启建房
+  const memberState = await window.zjz.get('/api/members');
+  const available = (memberState && memberState.slugs) || [];
+  if (!slug || !available.includes(slug)) {
+    slug = available[0] || '';
+    if (slug) {
+      localStorage.setItem('zjz.slug', slug);
+    } else {
       const created = await window.zjz.post('/api/identity/create', { name: '主人' });
       if (created && created.ok && created.slug) {
         slug = created.slug;
