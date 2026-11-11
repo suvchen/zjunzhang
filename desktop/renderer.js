@@ -263,28 +263,39 @@ function defaultAgentArgs(exe, name) {
 }
 
 async function detectAgents() {
-  const j = await window.zjz.get('/api/agents/discover');
+  const discovered = await window.zjz.get('/api/agents/discover');
   const box = $('agDetect');
-  const list = (j && j.agents) || [];
+  const list = (discovered && discovered.agents) || [];
   if (list.length === 0) { box.innerHTML = '<span style="color:var(--warn)">本机没检测到已知智能体 CLI，可手动填</span>'; return; }
+
+  const prepareDetected = async (chip, quick) => {
+    const agentState = await window.zjz.get('/api/agents');
+    const existingAgents = (agentState && agentState.agents) || [];
+    const exe = chip.dataset.exe;
+    const name = chip.dataset.name;
+    const args = defaultAgentArgs(exe, name);
+    const expected = [exe, ...String(args || '').trim().split(/\s+/).filter(Boolean)];
+    const existing = existingAgents.find((item) => Array.isArray(item.argv)
+      && item.argv[0] === expected[0]
+      && item.argv.length === expected.length
+      && item.argv.every((value, index) => String(value) === String(expected[index])));
+    $('agSlug').value = existing ? existing.slug : '';
+    $('agExe').value = exe;
+    $('agDispName').value = `${name}分身`;
+    $('agArgs').value = args;
+    if (quick) $('agInvite').click();
+  };
   box.innerHTML = '<span style="color:var(--dim2)">本机检测到：</span>' + list.map((a) =>
     `<span class="chip fill-one" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">＋ ${esc(a.name)}</span><button type="button" class="chip add-one" data-exe="${esc(a.exe)}" data-name="${esc(a.name)}">一键加入</button>`).join('');
-  box.querySelectorAll('.chip.fill-one').forEach((c) => {
-    c.onclick = () => {
-      $('agExe').value = c.dataset.exe;
-      if (!$('agDispName').value) $('agDispName').value = c.dataset.name + '分身';
-      $('agArgs').value = defaultAgentArgs(c.dataset.exe, c.dataset.name);
-    };
+  box.querySelectorAll('.chip.fill-one').forEach((chip) => {
+    chip.onclick = () => prepareDetected(chip, false);
   });
-  box.querySelectorAll('.chip.add-one').forEach((c) => {
-    c.onclick = () => {
+  box.querySelectorAll('.chip.add-one').forEach((chip) => {
+    chip.onclick = () => {
       const room_id = $('agRoom').value;
       const msg = $('agInviteMsg');
       if (!room_id) { msg.className = 'amsg bad'; msg.textContent = '先在“进入房间”里选一个项目房'; return; }
-      $('agExe').value = c.dataset.exe;
-      $('agDispName').value = c.dataset.name + '分身';
-      $('agArgs').value = defaultAgentArgs(c.dataset.exe, c.dataset.name);
-      $('agInvite').click();
+      prepareDetected(chip, true);
     };
   });
 }
@@ -299,8 +310,12 @@ async function loadAgentRooms() {
 
 // —— 智能体：帐内列表（逐房移出，E37 契约） ——
 async function loadAgents() {
-  const j = await window.zjz.get('/api/agents');
-  const rows = (j && j.agents) || [];
+  const [agentState, roomState] = await Promise.all([
+    window.zjz.get('/api/agents'),
+    window.zjz.get(`/api/rooms?slug=${encodeURIComponent(slug)}`),
+  ]);
+  const rows = (agentState && agentState.agents) || [];
+  const roomNames = new Map(((roomState && roomState.rooms) || []).map((room) => [room.room_id, room.name || room.room_id]));
   const box = $('agList');
   if (rows.length === 0) { box.innerHTML = '<div style="color:var(--dim2)">还没有智能体，上面请一个进来</div>'; return; }
   box.innerHTML = rows.map((r) => {
@@ -309,7 +324,7 @@ async function loadAgents() {
     return `<div class="agent-item">
       <span class="an">${esc(r.name || shortName(r.slug))}</span>
       <span class="aw ${wired ? 'on' : 'off'}">${wired ? '已接通' : '未接线'}</span>
-      ${rooms.map((rm) => `<button class="ax" data-rm="${esc(r.slug)}" data-rmroom="${esc(rm.room_id)}" data-by="${esc(rm.owner || slug)}">移出 ${esc(rm.name || shortName(rm.room_id))}</button>`).join('')}
+      ${rooms.map((rm) => `<button class="ax" data-rm="${esc(r.slug)}" data-rmroom="${esc(rm.room_id)}" data-by="${esc(rm.owner || slug)}">移出 ${esc(roomNames.get(rm.room_id) || rm.name || shortName(rm.room_id))}</button>`).join('')}
       ${rooms.length === 0 ? '<span class="arm">未进房</span>' : ''}
     </div>`;
   }).join('');
@@ -320,7 +335,7 @@ async function loadAgents() {
       if (res && res.ok) {
         msg.className = 'amsg ok';
         const still = (res.still_in_rooms || []).length;
-        msg.textContent = `已移出「${shortName(b.dataset.rmroom)}」` + (still ? `（还在 ${still} 个房）` : '（已退出所有房）');
+        msg.textContent = `已移出「${roomNames.get(b.dataset.rmroom) || shortName(b.dataset.rmroom)}」` + (still ? `（还在 ${still} 个房）` : '（已退出所有房）');
         loadAgents();
       } else {
         msg.className = 'amsg bad';
@@ -329,7 +344,6 @@ async function loadAgents() {
     };
   });
 }
-
 // —— 主题：深色/浅色可选 ——
 function applyTheme(name) {
   if (name === 'light') document.documentElement.setAttribute('data-theme', 'light');
@@ -397,6 +411,7 @@ function applyTheme(name) {
   $('agInvite').onclick = async () => {
     const msg = $('agInviteMsg'); msg.className = 'amsg'; msg.textContent = '';
     const name = $('agDispName').value.trim();
+    const preferredSlug = $('agSlug').value.trim();
     const room_id = $('agRoom').value;
     const exe = $('agExe').value.trim();
     const args = String($('agArgs').value || '').trim().split(/\s+/).filter(Boolean);
@@ -405,7 +420,7 @@ function applyTheme(name) {
     if (!exe) { msg.className = 'amsg bad'; msg.textContent = '先填可执行文件'; return; }
     if (!argv.some((x) => x.includes('{task}'))) { msg.className = 'amsg bad'; msg.textContent = '参数里必须含 {task}（房讯从这进去）'; return; }
     const r = await window.zjz.post('/api/agents/invite', {
-      name: name || undefined, slug: name || undefined, room_id,
+      name: name || undefined, slug: preferredSlug || name || undefined, room_id,
       adapter_kind: 'spawn', argv, wake_policy: $('agWake').value, by: slug,
       timeout_ms: Number($('agTimeout').value) || 600000,
     });
@@ -418,7 +433,9 @@ function applyTheme(name) {
       msg.textContent = (r && r.code ? r.code + '：' : '') + (r && r.message ? r.message : '邀请失败');
     }
   };
-  $('sendBtn').onclick = sendMsg;
+  ['agDispName', 'agExe', 'agArgs'].forEach((id) => {
+    $(id).addEventListener('input', () => { $('agSlug').value = ''; });
+  });  $('sendBtn').onclick = sendMsg;
   $('msgInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
   const createRoomFromPrompt = async () => {
     const name = prompt('新项目房间叫什么名字？');

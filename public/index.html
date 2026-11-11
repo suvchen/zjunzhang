@@ -40,7 +40,7 @@
     background:linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,0) 70%), var(--panel);
     border-bottom:1px solid var(--line2); box-shadow:0 6px 20px rgba(0,0,0,.28); flex-wrap:wrap; }
   header .logo { display:flex; align-items:center; gap:10px; margin-right:6px; }
-  header .logo img { width:30px; height:30px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.4); }
+  header .logo img { width:30px; height:30px; border-radius:0; background:#fff; opacity:1; filter:none; box-shadow:none; }
   header .logo .t { font-weight:700; font-size:16px; letter-spacing:.5px;
     background:linear-gradient(180deg,#f0d79b,#d9b46a 60%,#b98f42); -webkit-background-clip:text; background-clip:text; color:transparent; }
   header .logo .s { font-size:11px; color:var(--dim2); letter-spacing:2px; margin-top:-2px; }
@@ -99,7 +99,7 @@
   .err { color:var(--bad); padding:10px; }
   /* 空状态：中军帐 logo 水印 + 引导语 */
   .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:40px; text-align:center; }
-  .empty img { width:120px; height:120px; opacity:1; filter:none; }
+  .empty img { width:120px; height:120px; background:#fff; opacity:1; filter:none; box-shadow:none; }
   .empty .et { font-size:19px; font-weight:700; letter-spacing:4px;
     background:linear-gradient(180deg,#f0d79b,#c9a24f); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .empty .es { font-size:13px; color:var(--dim2); line-height:1.9; letter-spacing:1px; }

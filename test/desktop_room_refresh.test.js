@@ -9,8 +9,10 @@ const ROOT = path.resolve(HERE, '..');
 const renderer = fs.readFileSync(path.join(ROOT, 'desktop', 'renderer.js'), 'utf8');
 
 function handlerSource(source, id) {
-  const marker = `$('${id}').onclick = async () => {`;
-  const start = source.indexOf(marker);
+  const direct = `$('${id}').onclick = async () => {`;
+  const named = id === 'newRoom' ? 'const createRoomFromPrompt = async () => {' : '';
+  const directStart = source.indexOf(direct);
+  const start = directStart >= 0 ? directStart : source.indexOf(named);
   assert.notEqual(start, -1, `missing ${id} handler`);
   const open = source.indexOf('{', start);
   let depth = 0;

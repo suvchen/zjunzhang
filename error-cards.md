@@ -144,3 +144,28 @@
 现象（2026-11-10 22:01 实测）：两次启动后同时存在两个 electron 主进程（pid 34996 与 35624），各带自己的 renderer/gpu 子进程，两个窗口都显示「中军帐 · 指挥台」。违反「单窗口多房间、禁一房一窗/多窗」的产品口径，且两个窗口各自轮询，改动看不到彼此。
 机理：`desktop/main.js` 原来没有 `app.requestSingleInstanceLock()`，每次启动都是独立实例；另外**先起的旧实例是在加锁之前启动的**，它永远不会去抢锁，所以新增单实例锁只能挡住「此后」的第二次启动，存量老实例必须关掉重启一次才纳入。
 防：① `main.js` 启动即 `requestSingleInstanceLock()`，拿不到锁就 `app.quit()`，并在 `second-instance` 里 restore+focus 已有窗口；② 装机/交付口径写明「升级客户端后把旧窗口关掉再开一次」；③ 现场排查用 Get-CimInstance Win32_Process -Filter "Name='electron.exe'" 按命令行前缀确认有几个 app 主进程（--type=renderer/gpu/utility 是子进程，不算）。
+
+## E45 用 PowerShell `>` 重定向取二进制核哈希＝假不匹配（复核者自己先踩一次）
+
+现象（2026-11-11 12:39，复核 E44 冻结包）：用 `tar -xf zjz-v0.1.zip -O ZJZ-Setup.exe > file` 取包内安装包，算得 SHA256 `15DF7A51…0E57`，与源安装包 `5AC605A6…4B90` 不符，差一步误判成「包里塞了旧包」。改为 `tar -xf … -C 临时目录` 落地再算，哈希与大小（121415611 字节）完全一致。同源问题：`Buffer.toString('latin1')` 后 includes 中文（如「高级设置」）必然 false，UTF-8 中文被按单字节读成乱码。
+防：① 二进制先落盘再 `createHash().update(fs.readFileSync())`，禁用 PowerShell `>` / 管道传二进制；② 文本匹配要么 UTF-8 解码后比对，要么直接搜 ASCII 子串（`box-shadow:none`、`Promise.all([loadRooms()`）；③ 哈希不符先自证取证方式，再报缺陷。
+
+## E46 冻结包与仓库血缘脱钩（包已发，主干又往前走；工作区还是脏的）
+
+现象（2026-11-11 12:41 复核 E44）：安装包 12:28、zip 12:30 打好后，`master` 在 12:40 又落 `5da0253 feat(desktop): one-click add discovered agents`，`desktop/renderer.js`/`main.js` 有 12:37–12:39 的未提交改动，当前 checkout 的 `oss-release` 分支 `git status` 有 14 条脏记录（测试文件「已暂存删除＋磁盘仍在」并存）。包内容本身自洽（asar 内三处修复都在、包内安装包哈希与源一致），但**没有一条命令能把已发哈希唯一映射回某个 commit**。
+防：① 打包脚本收尾必须打印 `git rev-parse HEAD`，且 `git status --porcelain` 为空才允许出哈希；② 冻结包记录写成「包→commit→哈希」三元组，验收只认这组；③ 打包分支上不并行改文件，改动走独立分支再合。
+
+## E48 `dist/win-unpacked` 是残留，不是本次产物（复核者会验到上一版代码）
+
+现象（2026-11-11 13:40 复核 E47）：安装包 13:17:52、zip 13:19:34 已重建，但 `desktop/dist/win-unpacked`（含 `resources/app.asar`）时间戳停在 12:27:52，里面的 renderer.js **没有**「一键加入」，也没有「新建项目房」侧栏底座。也就是说从 win-unpacked 读 asar 会得出「E45/E46/E47 没进包」的假结论。真实产物要看两处：① zip 内 `ZJZ-Setup.exe`（哈希与源一致）；② 已安装目录 `%LOCALAPPDATA%\Programs\zjunzhang-desktop\resources\app.asar`（本次三处新功能均在，且房删/会员代码不在）。
+防：① 复核只认「已安装目录的 asar」或「包内安装包」，不认 `dist/win-unpacked`；② 打包脚本打包完直接删/时间戳校验 win-unpacked，或把 `win-unpacked` 打进 `.gitignore` 之外单独清理；③ 断言「功能是否进包」时先打印 asar 的 mtime 与 installer mtime 对比，两者差超过一次构建即视为残留。
+
+## E49 交付编号与错误卡编号共用一个命名空间（E45/E46 各指两件事）
+
+现象（2026-11-11 13:38）：房② 的交付序列编号 E44→E47（E45 一键进帐、E46 侧栏留白、E47 跨房复用），而 `error-cards.md` 里 E45＝PowerShell 二进制假哈希、E46＝冻结包血缘脱钩。同一个「E45/E46」在房间里指交付、在错误卡里指坑，回看时必然错配。
+防：① 交付序列与错误卡分成两套前缀（交付用 `D45…` 或 `E45-build`，错误卡保持 `E##`）；② 帖子首行必须写清是「交付」还是「错误卡」；③ 新建错误卡前先 `Select-String '^## E' error-cards.md` 查号，不复用交付号。
+
+## E50 安装目录被手工重打包＝用户机器上的产品比冻结包新，且没有任何哈希
+
+现象（2026-11-11 13:36 复核 E47）：冻结包安装包 13:17:52（SHA256 `6007FA07…`，源码对应 commit `93b2c0f`）、zip 13:19:34。但 13:33:18 安装目录 `%LOCALAPPDATA%\Programs\zjunzhang-desktop\resources\{app.asar,src\*}` 被整体换成 `26ccd98` 树：asar 内 renderer.js 与 `26ccd98:desktop/renderer.js` 逐字符相同（仅多一个开头空行），`src/serve.js`、`src/core.js` 与 `26ccd98` 的 blob 哈希完全一致。实测后果：主人桌面上 `POST /api/rooms/delete` 返回 `400 缺 by`（＝路由存在），而冻结包里没有这个路由——**用户正在用的产品不是已发布的那个包**，任何「UI 全链 PASS」都说不清跑在哪个产物上。
+防：① 装到用户机器只能走「打包→安装包哈希→安装」，禁手工覆盖 `resources`；② 万一手改，必须当场把新 asar 的 SHA256 和来源 commit 写进房间；③ 复核记录必须指明对象（冻结包 or 安装目录），二者分叉时以安装目录为准并标「无发布哈希、不可发布」。
